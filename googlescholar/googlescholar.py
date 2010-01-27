@@ -7,13 +7,13 @@ import random
 
 from BeautifulSoup import BeautifulSoup
 
-GOOGLE_SCHOLAR_URL = "http://scholar.google.com/scholar?q="
+GOOGLE_SCHOLAR_URL = "http://scholar.google.com"
 HEADERS = {'User-Agent' : 'Mozilla/5.0',
         'Cookie' : 'GSP=ID=%s:CF=4' % hashlib.md5(str(random.random())).hexdigest()[:16]}
 
 
 def query(searchstr):
-    searchstr = urllib2.quote(searchstr)
+    searchstr = '/scholar?q='+urllib2.quote(searchstr)
     url = GOOGLE_SCHOLAR_URL + searchstr
     request = urllib2.Request(url, headers=HEADERS)
     response = urllib2.urlopen(request)
@@ -22,11 +22,12 @@ def query(searchstr):
     # grab the bibtex links
     soup = BeautifulSoup(html)
     tmp = soup.findAll('a', href=re.compile("^/scholar.bib"))
+    tmp
     result = []
     # follow the bibtex links to get the bibtex entries
     for link in tmp:
         url = link["href"]
-        url = "http://scholar.google.com"+url
+        url = GOOGLE_SCHOLAR_URL+url
         request = urllib2.Request(url, headers=HEADERS)
         response = urllib2.urlopen(request)
         bib = response.read()
