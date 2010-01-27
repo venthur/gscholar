@@ -1,30 +1,22 @@
 #!/usr/bin/env python
 
 import urllib2
-import cookielib
 import re
+import hashlib
+import random
+
 from BeautifulSoup import BeautifulSoup
 
 GOOGLE_SCHOLAR_URL = "http://scholar.google.com/scholar?q="
-HEADERS = {'User-Agent' : 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)',
-           'Cookie' : 'GSP=ID=962a112b5c765732:CF=4'}
+HEADERS = {'User-Agent' : 'Mozilla/5.0',
+        'Cookie' : 'GSP=ID=%s:CF=4' % hashlib.md5(str(random.random())).hexdigest()[:16]}
 
 
 def query(searchstr):
     searchstr = urllib2.quote(searchstr)
     url = GOOGLE_SCHOLAR_URL + searchstr
-    cj = cookielib.CookieJar()
-    # first request to get the cookies
     request = urllib2.Request(url, headers=HEADERS)
-    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-    #response = opener.open(request)
-    # modify cookie to see bibtex entries
-    #for c in cj:
-    #    print c
-    #    if c.domain == ".scholar.google.com":
-    #        c.value += ":CF=4"
-   # new request
-    response = opener.open(request)
+    response = urllib2.urlopen(request)
     html = response.read()
     html.decode('ascii', 'ignore') 
     # grab the bibtex links
@@ -36,7 +28,7 @@ def query(searchstr):
         url = link["href"]
         url = "http://scholar.google.com"+url
         request = urllib2.Request(url, headers=HEADERS)
-        response = opener.open(request)
+        response = urllib2.urlopen(request)
         bib = response.read()
         result.append(bib)
     return result
