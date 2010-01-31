@@ -30,7 +30,8 @@ import re
 import hashlib
 import random
 import sys
-
+import os
+import subprocess
 
 from BeautifulSoup import BeautifulSoup
 
@@ -67,10 +68,39 @@ def query(searchstr):
     return result
 
 
+def convert_pdf_to_txt(pdf):
+    """Convert a pdf file to txet and return the text.
+    
+    This method requires pdftotext to be installed.
+    """
+    stdout = subprocess.Popen(["pdftotext", "-q", pdf, "-"], stdout=subprocess.PIPE).communicate()[0]
+    return stdout
+
+
+def pdflookup(pdf):
+    """Look a pdf up on google scholar and return bibtex items."""
+    txt = convert_pdf_to_txt(pdf)
+    # remove all non alphanumeric characters
+    txt = re.sub("\W", " ", txt)
+    words = txt.strip().split()[:20]
+    gsquery = " ".join(words)
+    print gsquery
+    bibtexlist = query(gsquery)
+    return bibtexlist
+
+
+
 if __name__ == "__main__":
     if len(sys.argv) < 1:
-        print 'Syntax: %s "your query terms"' % argv[0]
+        print 'Syntax: %s {"your query terms" | pdf}' % argv[0]
         sys.exit(1)
-    for i in query(sys.argv[1]):
+    arg = sys.argv[1]
+    if os.path.exists(arg):
+        print "File exist, assuming you want me to lookup the pdf: %s." % arg
+        biblist = pdflookup(arg)
+    else:
+        print "Assuming you want me to lookup the query: %s." % arg
+        biblist = query(arg)
+    for i in biblist:
         print i
 
