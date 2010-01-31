@@ -46,7 +46,7 @@ HEADERS = {'User-Agent' : 'Mozilla/5.0',
         'Cookie' : 'GSP=ID=%s:CF=4' % google_id }
 
 
-def query(searchstr):
+def query(searchstr, allresults=False):
     """Return a list of bibtex items."""
     logging.debug("Query: %s" % searchstr)
     searchstr = '/scholar?q='+urllib2.quote(searchstr)
@@ -61,6 +61,8 @@ def query(searchstr):
     tmp
     result = []
     # follow the bibtex links to get the bibtex entries
+    if allresults == False and len(tmp) != 0:
+        tmp = [tmp[0]]
     for link in tmp:
         url = link["href"]
         url = GOOGLE_SCHOLAR_URL+url
@@ -80,14 +82,14 @@ def convert_pdf_to_txt(pdf):
     return stdout
 
 
-def pdflookup(pdf):
+def pdflookup(pdf, allresults):
     """Look a pdf up on google scholar and return bibtex items."""
     txt = convert_pdf_to_txt(pdf)
     # remove all non alphanumeric characters
     txt = re.sub("\W", " ", txt)
     words = txt.strip().split()[:20]
     gsquery = " ".join(words)
-    bibtexlist = query(gsquery)
+    bibtexlist = query(gsquery, allresults)
     return bibtexlist
 
 
@@ -108,10 +110,10 @@ if __name__ == "__main__":
     args = args[0]
     if os.path.exists(args):
         logging.debug("File exist, assuming you want me to lookup the pdf: %s." % args)
-        biblist = pdflookup(args)
+        biblist = pdflookup(args, all)
     else:
         logging.debug("Assuming you want me to lookup the query: %s." % args)
-        biblist = query(args)
+        biblist = query(args, options.all)
     if len(biblist) < 1:
         print "No results found, try again with a different query!"
         sys.exit(1)
