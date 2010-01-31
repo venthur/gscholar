@@ -32,6 +32,8 @@ import random
 import sys
 import os
 import subprocess
+import optparse
+import logging
 
 from BeautifulSoup import BeautifulSoup
 
@@ -46,6 +48,7 @@ HEADERS = {'User-Agent' : 'Mozilla/5.0',
 
 def query(searchstr):
     """Return a list of bibtex items."""
+    logging.debug("Query: %s" % searchstr)
     searchstr = '/scholar?q='+urllib2.quote(searchstr)
     url = GOOGLE_SCHOLAR_URL + searchstr
     request = urllib2.Request(url, headers=HEADERS)
@@ -84,23 +87,39 @@ def pdflookup(pdf):
     txt = re.sub("\W", " ", txt)
     words = txt.strip().split()[:20]
     gsquery = " ".join(words)
-    print gsquery
     bibtexlist = query(gsquery)
     return bibtexlist
 
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 1:
-        print 'Syntax: %s {"your query terms" | pdf}' % argv[0]
+    usage = 'Usage: %prog [options] {pdf | "search terms"}'
+    parser = optparse.OptionParser(usage)
+    parser.add_option("-a", "--all", action="store_true", dest="all", 
+                      default="False", help="show all bibtex results")
+    parser.add_option("-d", "--debug", action="store_true", dest="debug",
+                      default="False", help="show debugging output")
+    (options, args) = parser.parse_args()
+    if options.debug == True:
+        logging.basicConfig(level=logging.DEBUG)
+    if len(args) != 1:
+        parser.error("No argument given, nothing to do.")
         sys.exit(1)
-    arg = sys.argv[1]
-    if os.path.exists(arg):
-        print "File exist, assuming you want me to lookup the pdf: %s." % arg
-        biblist = pdflookup(arg)
+    args = args[0]
+    if os.path.exists(args):
+        logging.debug("File exist, assuming you want me to lookup the pdf: %s." % args)
+        biblist = pdflookup(args)
     else:
-        print "Assuming you want me to lookup the query: %s." % arg
-        biblist = query(arg)
-    for i in biblist:
-        print i
+        logging.debug("Assuming you want me to lookup the query: %s." % args)
+        biblist = query(args)
+    if len(biblist) < 1:
+        print "No results found, try again with a different query!"
+        sys.exit(1)
+    if options.all == True:
+        logging.debug("All results:")
+        for i in biblist:
+            print i
+    else:
+        logging.debug("First result:")
+        print biblist[0]
 
