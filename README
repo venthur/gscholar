@@ -1,3 +1,11 @@
+Requirements
+============
+
+ * Python
+ * python-beautifulsoup (Python library)
+ * pdftotext (command line tool)
+
+
 Using gscholar as a command line tool
 =====================================
 
@@ -57,4 +65,6 @@ Copy the package somewhere Python can find it.
     gscholar.query("some author or title")
 
 will return a list of bibtex items.
+
+
 
