@@ -94,6 +94,51 @@ def pdflookup(pdf, allresults):
 
 
 
+def _get_bib_element(bibitem, element):
+    """Return element from bibitem or None."""
+    lst = [i.strip() for i in bibitem.split("\n")]
+    for i in lst:
+        if i.startswith(element):
+            value = i.split("=", 1)[-1]
+            value = value.strip()
+            while value.endswith(','):
+                value = value[:-1]
+            while value.startswith('{') or value.startswith('"'):
+                value = value[1:-1]
+            return value
+    return None
+
+def rename_file(pdf, bibitem):
+    """Attempt to rename pdf according to bibitem."""
+    year = _get_bib_element(bibitem, "year")
+    author = _get_bib_element(bibitem, "author")
+    if author:
+        author = author.split(",")[0]
+    title = _get_bib_element(bibitem, "title")
+    l = []
+    for i in year, author, title:
+        if i: 
+            l.append(i)
+    filename =  " - ".join(l) + ".pdf"
+    newfile = pdf.replace(os.path.basename(pdf), filename)
+    print
+    print "Will rename:"
+    print
+    print "  %s" % pdf
+    print 
+    print "to"
+    print 
+    print "  %s" % newfile
+    print 
+    print "Proceed? [y/N]"
+    answer = raw_input()
+    if answer == 'y':
+        print "Ranaming %s to %s" % (pdf, newfile)
+        os.rename(pdf, newfile)
+    else:
+        print "Aborting."
+
+
 if __name__ == "__main__":
     usage = 'Usage: %prog [options] {pdf | "search terms"}'
     parser = optparse.OptionParser(usage)
@@ -101,6 +146,8 @@ if __name__ == "__main__":
                       default="False", help="show all bibtex results")
     parser.add_option("-d", "--debug", action="store_true", dest="debug",
                       default="False", help="show debugging output")
+    parser.add_option("-r", "--rename", action="store_true", dest="rename",
+                      default="False", help="rename file (asks before doing it)")
     (options, args) = parser.parse_args()
     if options.debug == True:
         logging.basicConfig(level=logging.DEBUG)
@@ -108,8 +155,10 @@ if __name__ == "__main__":
         parser.error("No argument given, nothing to do.")
         sys.exit(1)
     args = args[0]
+    pdfmode = False
     if os.path.exists(args):
         logging.debug("File exist, assuming you want me to lookup the pdf: %s." % args)
+        pdfmode = True
         biblist = pdflookup(args, all)
     else:
         logging.debug("Assuming you want me to lookup the query: %s." % args)
@@ -124,4 +173,10 @@ if __name__ == "__main__":
     else:
         logging.debug("First result:")
         print biblist[0]
+    if options.rename == True:
+        if not pdfmode:
+            print "You asked me to rename the pdf but didn't tell me which file to rename, aborting."
+            sys.exit(1)
+        else:
+            rename_file(args, biblist[0])
 
