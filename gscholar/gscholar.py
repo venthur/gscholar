@@ -34,8 +34,7 @@ import os
 import subprocess
 import optparse
 import logging
-
-from BeautifulSoup import BeautifulSoup
+from HTMLParser import HTMLParser
 
 
 # fake google id (looks like it is a 16 elements hex)
@@ -56,16 +55,16 @@ def query(searchstr, allresults=False):
     html = response.read()
     html.decode('ascii', 'ignore') 
     # grab the bibtex links
-    soup = BeautifulSoup(html)
-    tmp = soup.findAll('a', href=re.compile("^/scholar.bib"))
-    tmp
-    result = []
+    parser = GScholarHTMLParser()
+    parser.feed(html)
+    tmp = parser.biblinks
+
     # follow the bibtex links to get the bibtex entries
+    result = list()
     if allresults == False and len(tmp) != 0:
         tmp = [tmp[0]]
     for link in tmp:
-        url = link["href"]
-        url = GOOGLE_SCHOLAR_URL+url
+        url = GOOGLE_SCHOLAR_URL+link
         request = urllib2.Request(url, headers=HEADERS)
         response = urllib2.urlopen(request)
         bib = response.read()
@@ -75,7 +74,7 @@ def query(searchstr, allresults=False):
 
 def convert_pdf_to_txt(pdf):
     """Convert a pdf file to txet and return the text.
-    
+
     This method requires pdftotext to be installed.
     """
     stdout = subprocess.Popen(["pdftotext", "-q", pdf, "-"], stdout=subprocess.PIPE).communicate()[0]
@@ -137,6 +136,22 @@ def rename_file(pdf, bibitem):
         os.rename(pdf, newfile)
     else:
         print "Aborting."
+
+
+class GScholarHTMLParser(HTMLParser):
+    """Parser for gschlar search result pages.
+
+    It parses a page and stores all bibtex-links in self.biblinks."""
+
+    def __init__(self):
+        HTMLParser.__init__(self)
+        self.biblinks = list()
+
+    def handle_starttag(self, tag, attrs):
+        if tag == 'a':
+            for name, value in attrs:
+                if name == 'href' and value.startswith('/scholar.bib?'):
+                    self.biblinks.append(value)
 
 
 if __name__ == "__main__":
