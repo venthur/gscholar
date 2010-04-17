@@ -2,7 +2,6 @@ Requirements
 ============
 
  * Python
- * python-beautifulsoup (Python library)
  * pdftotext (command line tool)
 
 
