@@ -34,7 +34,8 @@ import os
 import subprocess
 import optparse
 import logging
-from HTMLParser import HTMLParser
+from htmlentitydefs import name2codepoint
+
 
 
 # fake google id (looks like it is a 16 elements hex)
@@ -55,10 +56,7 @@ def query(searchstr, allresults=False):
     html = response.read()
     html.decode('ascii', 'ignore') 
     # grab the bibtex links
-    parser = GScholarHTMLParser()
-    parser.feed(html)
-    tmp = parser.biblinks
-
+    tmp = get_biblinks(html)
     # follow the bibtex links to get the bibtex entries
     result = list()
     if allresults == False and len(tmp) != 0:
@@ -68,8 +66,21 @@ def query(searchstr, allresults=False):
         request = urllib2.Request(url, headers=HEADERS)
         response = urllib2.urlopen(request)
         bib = response.read()
+        print
+        print
+        print bib
         result.append(bib)
     return result
+
+
+def get_biblinks(html):
+    """Return a list of biblinks from the html."""
+    bibre = re.compile(r'<a href="(/scholar\.bib\?[^>]*)">')
+    biblist = bibre.findall(html)
+    # escape html enteties
+    biblist = [re.sub('&(%s);' % '|'.join(name2codepoint), lambda m:
+        unichr(name2codepoint[m.group(1)]), s) for s in biblist]
+    return biblist
 
 
 def convert_pdf_to_txt(pdf):
@@ -92,7 +103,6 @@ def pdflookup(pdf, allresults):
     return bibtexlist
 
 
-
 def _get_bib_element(bibitem, element):
     """Return element from bibitem or None."""
     lst = [i.strip() for i in bibitem.split("\n")]
@@ -106,6 +116,7 @@ def _get_bib_element(bibitem, element):
                 value = value[1:-1]
             return value
     return None
+
 
 def rename_file(pdf, bibitem):
     """Attempt to rename pdf according to bibitem."""
@@ -136,22 +147,6 @@ def rename_file(pdf, bibitem):
         os.rename(pdf, newfile)
     else:
         print "Aborting."
-
-
-class GScholarHTMLParser(HTMLParser):
-    """Parser for gschlar search result pages.
-
-    It parses a page and stores all bibtex-links in self.biblinks."""
-
-    def __init__(self):
-        HTMLParser.__init__(self)
-        self.biblinks = list()
-
-    def handle_starttag(self, tag, attrs):
-        if tag == 'a':
-            for name, value in attrs:
-                if name == 'href' and value.startswith('/scholar.bib?'):
-                    self.biblinks.append(value)
 
 
 if __name__ == "__main__":
