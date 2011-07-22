@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # gscholar - Get bibtex entries from Goolge Scholar
-# Copyright (C) 2010  Bastian Venthur <venthur at debian org>
+# Copyright (C) 2011  Bastian Venthur <venthur at debian org>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -42,28 +42,40 @@ from htmlentitydefs import name2codepoint
 google_id = hashlib.md5(str(random.random())).hexdigest()[:16] 
 
 GOOGLE_SCHOLAR_URL = "http://scholar.google.com"
+# the cookie looks normally like: 
+#        'Cookie' : 'GSP=ID=%s:CF=4' % google_id }
+# where CF is the format (e.g. bibtex). since we don't know the format yet, we
+# have to append it later
 HEADERS = {'User-Agent' : 'Mozilla/5.0',
-        'Cookie' : 'GSP=ID=%s:CF=4' % google_id }
+        'Cookie' : 'GSP=ID=%s' % google_id }
+
+FORMAT_BIBTEX = 4
+FORMAT_ENDNOTE = 3
+FORMAT_REFMAN = 2
+FORMAT_WENXIANWANG = 5
 
 
-def query(searchstr, allresults=False):
+def query(searchstr, outformat, allresults=False):
     """Return a list of bibtex items."""
     logging.debug("Query: %s" % searchstr)
     searchstr = '/scholar?q='+urllib2.quote(searchstr)
     url = GOOGLE_SCHOLAR_URL + searchstr
-    request = urllib2.Request(url, headers=HEADERS)
+    header = HEADERS
+    header['Cookie'] = header['Cookie'] + ":CF=%d" % outformat
+    request = urllib2.Request(url, headers=header)
     response = urllib2.urlopen(request)
     html = response.read()
     html.decode('ascii', 'ignore') 
-    # grab the bibtex links
-    tmp = get_biblinks(html)
+    # grab the links
+    tmp = get_links(html, outformat)
+
     # follow the bibtex links to get the bibtex entries
     result = list()
     if allresults == False and len(tmp) != 0:
         tmp = [tmp[0]]
     for link in tmp:
         url = GOOGLE_SCHOLAR_URL+link
-        request = urllib2.Request(url, headers=HEADERS)
+        request = urllib2.Request(url, headers=header)
         response = urllib2.urlopen(request)
         bib = response.read()
         print
@@ -73,14 +85,21 @@ def query(searchstr, allresults=False):
     return result
 
 
-def get_biblinks(html):
-    """Return a list of biblinks from the html."""
-    bibre = re.compile(r'<a href="(/scholar\.bib\?[^>]*)">')
-    biblist = bibre.findall(html)
+def get_links(html, outformat):
+    """Return a list of reference links from the html."""
+    if outformat == FORMAT_BIBTEX:
+        refre = re.compile(r'<a href="(/scholar\.bib\?[^>]*)">')
+    elif outformat == FORMAT_ENDNOTE:
+        refre = re.compile(r'<a href="(/scholar\.enw\?[^>]*)">')
+    elif outformat == FORMAT_REFMAN:
+        refre = re.compile(r'<a href="(/scholar\.ris\?[^>]*)">')
+    elif outformat == FORMAT_WENXIANWANG:
+        refre = re.compile(r'<a href="(/scholar\.ral\?[^>]*)">')
+    reflist = refre.findall(html)
     # escape html enteties
-    biblist = [re.sub('&(%s);' % '|'.join(name2codepoint), lambda m:
-        unichr(name2codepoint[m.group(1)]), s) for s in biblist]
-    return biblist
+    reflist = [re.sub('&(%s);' % '|'.join(name2codepoint), lambda m:
+        unichr(name2codepoint[m.group(1)]), s) for s in reflist]
+    return reflist
 
 
 def convert_pdf_to_txt(pdf):
@@ -92,14 +111,14 @@ def convert_pdf_to_txt(pdf):
     return stdout
 
 
-def pdflookup(pdf, allresults):
+def pdflookup(pdf, allresults, outformat):
     """Look a pdf up on google scholar and return bibtex items."""
     txt = convert_pdf_to_txt(pdf)
     # remove all non alphanumeric characters
     txt = re.sub("\W", " ", txt)
     words = txt.strip().split()[:20]
     gsquery = " ".join(words)
-    bibtexlist = query(gsquery, allresults)
+    bibtexlist = query(gsquery, outformat, allresults)
     return bibtexlist
 
 
@@ -153,14 +172,24 @@ if __name__ == "__main__":
     usage = 'Usage: %prog [options] {pdf | "search terms"}'
     parser = optparse.OptionParser(usage)
     parser.add_option("-a", "--all", action="store_true", dest="all", 
-                      default="False", help="show all bibtex results")
+            default="False", help="show all bibtex results")
     parser.add_option("-d", "--debug", action="store_true", dest="debug",
-                      default="False", help="show debugging output")
+            default="False", help="show debugging output")
     parser.add_option("-r", "--rename", action="store_true", dest="rename",
-                      default="False", help="rename file (asks before doing it)")
+            default="False", help="rename file (asks before doing it)")
+    parser.add_option("-f", "--outputformat", dest='output',
+            default="bibtex", help="Output format. Available formats are: bibtex, endnote, refman, wenxianwang [default: %default]")
     (options, args) = parser.parse_args()
     if options.debug == True:
         logging.basicConfig(level=logging.DEBUG)
+    if options.output == 'bibtex':
+        outformat = FORMAT_BIBTEX
+    elif options.output == 'endnote':
+        outformat = FORMAT_ENDNOTE
+    elif options.output == 'refman':
+        outformat = FORMAT_REFMAN
+    elif options.output == 'wenxianwang':
+        outformat = FORMAT_WENXIANWANG
     if len(args) != 1:
         parser.error("No argument given, nothing to do.")
         sys.exit(1)
@@ -169,10 +198,10 @@ if __name__ == "__main__":
     if os.path.exists(args):
         logging.debug("File exist, assuming you want me to lookup the pdf: %s." % args)
         pdfmode = True
-        biblist = pdflookup(args, all)
+        biblist = pdflookup(args, all, outformat)
     else:
         logging.debug("Assuming you want me to lookup the query: %s." % args)
-        biblist = query(args, options.all)
+        biblist = query(args, outformat, options.all)
     if len(biblist) < 1:
         print "No results found, try again with a different query!"
         sys.exit(1)
