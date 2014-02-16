@@ -71,7 +71,7 @@ def query(searchstr, outformat, allresults=False):
 
     # follow the bibtex links to get the bibtex entries
     result = list()
-    if allresults == False:
+    if not allresults:
         tmp = tmp[:1]
     for link in tmp:
         url = GOOGLE_SCHOLAR_URL+link
