@@ -65,22 +65,19 @@ def query(searchstr, outformat, allresults=False):
     request = urllib2.Request(url, headers=header)
     response = urllib2.urlopen(request)
     html = response.read()
-    html.decode('ascii', 'ignore') 
+    html.decode('ascii', 'ignore')
     # grab the links
     tmp = get_links(html, outformat)
 
     # follow the bibtex links to get the bibtex entries
     result = list()
-    if allresults == False and len(tmp) != 0:
-        tmp = [tmp[0]]
+    if not allresults:
+        tmp = tmp[:1]
     for link in tmp:
         url = GOOGLE_SCHOLAR_URL+link
         request = urllib2.Request(url, headers=header)
         response = urllib2.urlopen(request)
         bib = response.read()
-        print
-        print
-        print bib
         result.append(bib)
     return result
 
@@ -88,13 +85,13 @@ def query(searchstr, outformat, allresults=False):
 def get_links(html, outformat):
     """Return a list of reference links from the html."""
     if outformat == FORMAT_BIBTEX:
-        refre = re.compile(r'<a href="(/scholar\.bib\?[^>]*)">')
+        refre = re.compile(r'<a href="(/scholar\.bib\?[^"]*)')
     elif outformat == FORMAT_ENDNOTE:
-        refre = re.compile(r'<a href="(/scholar\.enw\?[^>]*)">')
+        refre = re.compile(r'<a href="(/scholar\.enw\?[^"]*)"')
     elif outformat == FORMAT_REFMAN:
-        refre = re.compile(r'<a href="(/scholar\.ris\?[^>]*)">')
+        refre = re.compile(r'<a href="(/scholar\.ris\?[^"]*)"')
     elif outformat == FORMAT_WENXIANWANG:
-        refre = re.compile(r'<a href="(/scholar\.ral\?[^>]*)">')
+        refre = re.compile(r'<a href="(/scholar\.ral\?[^"]*)"')
     reflist = refre.findall(html)
     # escape html enteties
     reflist = [re.sub('&(%s);' % '|'.join(name2codepoint), lambda m:
@@ -171,12 +168,12 @@ def rename_file(pdf, bibitem):
 if __name__ == "__main__":
     usage = 'Usage: %prog [options] {pdf | "search terms"}'
     parser = optparse.OptionParser(usage)
-    parser.add_option("-a", "--all", action="store_true", dest="all", 
-            default="False", help="show all bibtex results")
+    parser.add_option("-a", "--all", action="store_true", dest="all",
+            default=False, help="show all bibtex results")
     parser.add_option("-d", "--debug", action="store_true", dest="debug",
-            default="False", help="show debugging output")
+            default=False, help="show debugging output")
     parser.add_option("-r", "--rename", action="store_true", dest="rename",
-            default="False", help="rename file (asks before doing it)")
+            default=False, help="rename file (asks before doing it)")
     parser.add_option("-f", "--outputformat", dest='output',
             default="bibtex", help="Output format. Available formats are: bibtex, endnote, refman, wenxianwang [default: %default]")
     (options, args) = parser.parse_args()
