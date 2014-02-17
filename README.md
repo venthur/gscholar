@@ -4,6 +4,12 @@ Requirements
  * Python
  * pdftotext (command line tool)
 
+Installing
+==========
+
+```bash
+$ pip install gscholar
+```
 
 Using gscholar as a command line tool
 =====================================
