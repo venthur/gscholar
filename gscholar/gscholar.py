@@ -3,19 +3,20 @@
 # gscholar - Get bibtex entries from Goolge Scholar
 # Copyright (C) 2011  Bastian Venthur <venthur at debian org>
 #
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or (at
+# your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
 
 
 """Library to query Google Scholar.
@@ -39,15 +40,15 @@ from htmlentitydefs import name2codepoint
 
 
 # fake google id (looks like it is a 16 elements hex)
-google_id = hashlib.md5(str(random.random())).hexdigest()[:16] 
+google_id = hashlib.md5(str(random.random())).hexdigest()[:16]
 
 GOOGLE_SCHOLAR_URL = "http://scholar.google.com"
-# the cookie looks normally like: 
+# the cookie looks normally like:
 #        'Cookie' : 'GSP=ID=%s:CF=4' % google_id }
 # where CF is the format (e.g. bibtex). since we don't know the format yet, we
 # have to append it later
-HEADERS = {'User-Agent' : 'Mozilla/5.0',
-        'Cookie' : 'GSP=ID=%s' % google_id }
+HEADERS = {'User-Agent': 'Mozilla/5.0',
+           'Cookie': 'GSP=ID=%s' % google_id}
 
 FORMAT_BIBTEX = 4
 FORMAT_ENDNOTE = 3
@@ -143,19 +144,19 @@ def rename_file(pdf, bibitem):
     title = _get_bib_element(bibitem, "title")
     l = []
     for i in year, author, title:
-        if i: 
+        if i:
             l.append(i)
-    filename =  " - ".join(l) + ".pdf"
+    filename = " - ".join(l) + ".pdf"
     newfile = pdf.replace(os.path.basename(pdf), filename)
     print
     print "Will rename:"
     print
     print "  %s" % pdf
-    print 
+    print
     print "to"
-    print 
+    print
     print "  %s" % newfile
-    print 
+    print
     print "Proceed? [y/N]"
     answer = raw_input()
     if answer == 'y':
