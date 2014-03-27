@@ -66,8 +66,7 @@ def query(searchstr, outformat, allresults=False):
     header['Cookie'] = header['Cookie'] + ":CF=%d" % outformat
     request = urllib2.Request(url, headers=header)
     response = urllib2.urlopen(request)
-    html = response.read()
-    html.decode('ascii', 'ignore')
+    html = response.read().decode('utf-8')
     # grab the links
     tmp = get_links(html, outformat)
 
