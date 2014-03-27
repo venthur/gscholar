@@ -40,7 +40,8 @@ from htmlentitydefs import name2codepoint
 
 
 # fake google id (looks like it is a 16 elements hex)
-google_id = hashlib.md5(str(random.random())).hexdigest()[:16]
+rand = str(random.random()).encode('utf-8')
+google_id = hashlib.md5(rand).hexdigest()[:16]
 
 GOOGLE_SCHOLAR_URL = "http://scholar.google.com"
 # the cookie looks normally like:
