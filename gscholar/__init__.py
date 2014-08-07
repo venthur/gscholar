@@ -1,1 +1,1 @@
-from gscholar import *
+from .gscholar import query
