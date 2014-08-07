@@ -87,6 +87,10 @@ def query(searchstr, outformat, allresults=False):
         request = Request(url, headers=header)
         response = urlopen(request)
         bib = response.read()
+        try:
+            bib = bib.decode()
+        except UnicodeDecodeError:
+            pass
         result.append(bib)
     return result
 
@@ -119,7 +123,10 @@ def convert_pdf_to_txt(pdf):
 
 def pdflookup(pdf, allresults, outformat):
     """Look a pdf up on google scholar and return bibtex items."""
-    txt = convert_pdf_to_txt(pdf)
+    try:
+        txt = convert_pdf_to_txt(pdf).decode()
+    except UnicodeDecodeError:
+        txt = convert_pdf_to_txt(pdf)
     # remove all non alphanumeric characters
     txt = re.sub("\W", " ", txt)
     words = txt.strip().split()[:20]
