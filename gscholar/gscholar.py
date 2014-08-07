@@ -25,8 +25,14 @@ Call the method query with a string which contains the full search string.
 Query will return a list of bibtex items.
 """
 
+try:
+    from urllib2 import Request, urlopen, quote
+    from htmlentitydefs import name2codepoint
+except ImportError:
+    from urllib.parse import quote
+    from urllib.request import Request, urlopen
+    from html.entities import name2codepoint
 
-import urllib2
 import re
 import hashlib
 import random
@@ -35,12 +41,15 @@ import os
 import subprocess
 import optparse
 import logging
-from htmlentitydefs import name2codepoint
 
-
+try:
+    input = raw_input
+except NameError:
+    pass
 
 # fake google id (looks like it is a 16 elements hex)
-google_id = hashlib.md5(str(random.random())).hexdigest()[:16]
+rand = str(random.random()).encode('utf-8')
+google_id = hashlib.md5(rand).hexdigest()[:16]
 
 GOOGLE_SCHOLAR_URL = "http://scholar.google.com"
 # the cookie looks normally like:
@@ -59,14 +68,13 @@ FORMAT_WENXIANWANG = 5
 def query(searchstr, outformat, allresults=False):
     """Return a list of bibtex items."""
     logging.debug("Query: %s" % searchstr)
-    searchstr = '/scholar?q='+urllib2.quote(searchstr)
+    searchstr = '/scholar?q=' + quote(searchstr)
     url = GOOGLE_SCHOLAR_URL + searchstr
     header = HEADERS
     header['Cookie'] = header['Cookie'] + ":CF=%d" % outformat
-    request = urllib2.Request(url, headers=header)
-    response = urllib2.urlopen(request)
-    html = response.read()
-    html.decode('ascii', 'ignore')
+    request = Request(url, headers=header)
+    response = urlopen(request)
+    html = response.read().decode('utf-8')
     # grab the links
     tmp = get_links(html, outformat)
 
@@ -76,9 +84,13 @@ def query(searchstr, outformat, allresults=False):
         tmp = tmp[:1]
     for link in tmp:
         url = GOOGLE_SCHOLAR_URL+link
-        request = urllib2.Request(url, headers=header)
-        response = urllib2.urlopen(request)
+        request = Request(url, headers=header)
+        response = urlopen(request)
         bib = response.read()
+        try:
+            bib = bib.decode()
+        except UnicodeDecodeError:
+            pass
         result.append(bib)
     return result
 
@@ -94,14 +106,14 @@ def get_links(html, outformat):
     elif outformat == FORMAT_WENXIANWANG:
         refre = re.compile(r'<a href="(/scholar\.ral\?[^"]*)"')
     reflist = refre.findall(html)
-    # escape html enteties
+    # escape html entities
     reflist = [re.sub('&(%s);' % '|'.join(name2codepoint), lambda m:
-        unichr(name2codepoint[m.group(1)]), s) for s in reflist]
+        chr(name2codepoint[m.group(1)]), s) for s in reflist]
     return reflist
 
 
 def convert_pdf_to_txt(pdf):
-    """Convert a pdf file to txet and return the text.
+    """Convert a pdf file to text and return the text.
 
     This method requires pdftotext to be installed.
     """
@@ -111,7 +123,10 @@ def convert_pdf_to_txt(pdf):
 
 def pdflookup(pdf, allresults, outformat):
     """Look a pdf up on google scholar and return bibtex items."""
-    txt = convert_pdf_to_txt(pdf)
+    try:
+        txt = convert_pdf_to_txt(pdf).decode()
+    except UnicodeDecodeError:
+        txt = convert_pdf_to_txt(pdf)
     # remove all non alphanumeric characters
     txt = re.sub("\W", " ", txt)
     words = txt.strip().split()[:20]
@@ -148,22 +163,17 @@ def rename_file(pdf, bibitem):
             l.append(i)
     filename = " - ".join(l) + ".pdf"
     newfile = pdf.replace(os.path.basename(pdf), filename)
-    print
-    print "Will rename:"
-    print
-    print "  %s" % pdf
-    print
-    print "to"
-    print
-    print "  %s" % newfile
-    print
-    print "Proceed? [y/N]"
-    answer = raw_input()
+    print("\nWill rename:\n")
+    print("  %s" % pdf)
+    print("\nto\n")
+    print("  %s" % newfile)
+    print("\nProceed? [y/N]")
+    answer = input()
     if answer == 'y':
-        print "Renaming %s to %s" % (pdf, newfile)
+        print("Renaming %s to %s" % (pdf, newfile))
         os.rename(pdf, newfile)
     else:
-        print "Aborting."
+        print("Aborting.")
 
 
 if __name__ == "__main__":
@@ -201,18 +211,18 @@ if __name__ == "__main__":
         logging.debug("Assuming you want me to lookup the query: %s." % args)
         biblist = query(args, outformat, options.all)
     if len(biblist) < 1:
-        print "No results found, try again with a different query!"
+        print("No results found, try again with a different query!")
         sys.exit(1)
     if options.all == True:
         logging.debug("All results:")
         for i in biblist:
-            print i
+            print(i)
     else:
         logging.debug("First result:")
-        print biblist[0]
+        print(biblist[0])
     if options.rename == True:
         if not pdfmode:
-            print "You asked me to rename the pdf but didn't tell me which file to rename, aborting."
+            print("You asked me to rename the pdf but didn't tell me which file to rename, aborting.")
             sys.exit(1)
         else:
             rename_file(args, biblist[0])

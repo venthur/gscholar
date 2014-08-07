@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 
-from distutils.core import setup
+from setuptools import setup
 
 
 setup(name='gscholar',
@@ -11,4 +11,5 @@ setup(name='gscholar',
       author_email='mail@venthur.de',
       url='http://github.com/venthur/gscholar',
       packages=['gscholar'],
+      use_2to3=True,
 )
