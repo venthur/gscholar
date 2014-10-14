@@ -28,7 +28,21 @@ Query will return a list of bibtex items.
 
 from __future__ import print_function
 
-import urllib2
+
+try:
+    # python 2
+    from urllib2 import Request, urlopen, quote
+except ImportError:
+    # python 3
+    from urllib.request import Request, urlopen, quote
+
+try:
+    # python 2
+    from htmlentitydefs import name2codepoint
+except ImportError:
+    # python 3
+    from html.entities import name2codepoint
+
 import re
 import hashlib
 import random
@@ -37,7 +51,6 @@ import os
 import subprocess
 import optparse
 import logging
-from htmlentitydefs import name2codepoint
 
 
 
@@ -61,12 +74,12 @@ FORMAT_WENXIANWANG = 5
 def query(searchstr, outformat, allresults=False):
     """Return a list of bibtex items."""
     logging.debug("Query: %s" % searchstr)
-    searchstr = '/scholar?q='+urllib2.quote(searchstr)
+    searchstr = '/scholar?q='+quote(searchstr)
     url = GOOGLE_SCHOLAR_URL + searchstr
     header = HEADERS
     header['Cookie'] = header['Cookie'] + ":CF=%d" % outformat
-    request = urllib2.Request(url, headers=header)
-    response = urllib2.urlopen(request)
+    request = Request(url, headers=header)
+    response = urlopen(request)
     html = response.read()
     html.decode('ascii', 'ignore')
     # grab the links
@@ -78,8 +91,8 @@ def query(searchstr, outformat, allresults=False):
         tmp = tmp[:1]
     for link in tmp:
         url = GOOGLE_SCHOLAR_URL+link
-        request = urllib2.Request(url, headers=header)
-        response = urllib2.urlopen(request)
+        request = Request(url, headers=header)
+        response = urlopen(request)
         bib = response.read()
         result.append(bib)
     return result
