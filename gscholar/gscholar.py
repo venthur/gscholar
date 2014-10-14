@@ -73,8 +73,26 @@ FORMAT_REFMAN = 2
 FORMAT_WENXIANWANG = 5
 
 
-def query(searchstr, outformat, allresults=False):
-    """Return a list of bibtex items."""
+def query(searchstr, outformat=FORMAT_BIBTEX, allresults=False):
+    """Query google scholar.
+
+    This method queries google scholar and returns a list of citations.
+
+    Parameters
+    ----------
+    searchstr : str
+        the query
+    outformat : int, optional
+        the output format of the citations. Default is bibtex.
+    allresults : bool, optional
+        return all results or only the first (i.e. best one)
+
+    Returns
+    -------
+    result : list of strings
+        the list with citations
+
+    """
     logging.debug("Query: {sstring}".format(sstring=searchstr))
     searchstr = '/scholar?q='+quote(searchstr)
     url = GOOGLE_SCHOLAR_URL + searchstr
