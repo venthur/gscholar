@@ -53,9 +53,9 @@ import optparse
 import logging
 
 
-
 # fake google id (looks like it is a 16 elements hex)
-google_id = hashlib.md5(str(random.random())).hexdigest()[:16]
+rand_str = str(random.random()).encode('utf8')
+google_id = hashlib.md5(rand_str).hexdigest()[:16]
 
 GOOGLE_SCHOLAR_URL = "http://scholar.google.com"
 # the cookie looks normally like:
