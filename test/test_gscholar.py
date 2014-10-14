@@ -17,3 +17,8 @@ class TestGScholar(unittest.TestCase):
         """Normal query with utf8 encoding should give non empty result."""
         result = gs.query("Anders Jonas Ångström", gs.FORMAT_BIBTEX)
         self.assertTrue(result)
+
+
+if __name__ == '__main__':
+    unittest.main()
+
