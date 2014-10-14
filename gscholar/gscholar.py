@@ -26,6 +26,8 @@ Query will return a list of bibtex items.
 """
 
 
+from __future__ import print_function
+
 import urllib2
 import re
 import hashlib
@@ -148,22 +150,22 @@ def rename_file(pdf, bibitem):
             l.append(i)
     filename = " - ".join(l) + ".pdf"
     newfile = pdf.replace(os.path.basename(pdf), filename)
-    print
-    print "Will rename:"
-    print
-    print "  %s" % pdf
-    print
-    print "to"
-    print
-    print "  %s" % newfile
-    print
-    print "Proceed? [y/N]"
+    print()
+    print("Will rename:")
+    print()
+    print("  %s" % pdf)
+    print()
+    print("to")
+    print()
+    print("  %s" % newfile)
+    print()
+    print("Proceed? [y/N]")
     answer = raw_input()
     if answer == 'y':
-        print "Renaming %s to %s" % (pdf, newfile)
+        print("Renaming %s to %s" % (pdf, newfile))
         os.rename(pdf, newfile)
     else:
-        print "Aborting."
+        print("Aborting.")
 
 
 if __name__ == "__main__":
@@ -201,18 +203,18 @@ if __name__ == "__main__":
         logging.debug("Assuming you want me to lookup the query: %s." % args)
         biblist = query(args, outformat, options.all)
     if len(biblist) < 1:
-        print "No results found, try again with a different query!"
+        print("No results found, try again with a different query!")
         sys.exit(1)
     if options.all == True:
         logging.debug("All results:")
         for i in biblist:
-            print i
+            print(i)
     else:
         logging.debug("First result:")
-        print biblist[0]
+        print(biblist[0])
     if options.rename == True:
         if not pdfmode:
-            print "You asked me to rename the pdf but didn't tell me which file to rename, aborting."
+            print("You asked me to rename the pdf but didn't tell me which file to rename, aborting.")
             sys.exit(1)
         else:
             rename_file(args, biblist[0])
