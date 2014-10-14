@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # gscholar - Get bibtex entries from Goolge Scholar
-# Copyright (C) 2011  Bastian Venthur <venthur at debian org>
+# Copyright (C) 2011-2014  Bastian Venthur <venthur at debian org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -129,14 +129,14 @@ def get_links(html, outformat):
     elif outformat == FORMAT_WENXIANWANG:
         refre = re.compile(r'<a href="(/scholar\.ral\?[^"]*)"')
     reflist = refre.findall(html)
-    # escape html enteties
+    # escape html entities
     reflist = [re.sub('&(%s);' % '|'.join(name2codepoint), lambda m:
                       unichr(name2codepoint[m.group(1)]), s) for s in reflist]
     return reflist
 
 
 def convert_pdf_to_txt(pdf):
-    """Convert a pdf file to txet and return the text.
+    """Convert a pdf file to text and return the text.
 
     This method requires pdftotext to be installed.
     """
