@@ -6,7 +6,7 @@ import unittest
 from gscholar import gscholar as gs
 
 
-class TesteGScholar(unittest.TestCase):
+class TestGScholar(unittest.TestCase):
 
     def test_query(self):
         """Normal query with latin encoding should give non empty result."""
