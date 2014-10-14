@@ -58,7 +58,7 @@ FORMAT_WENXIANWANG = 5
 
 def query(searchstr, outformat, allresults=False):
     """Return a list of bibtex items."""
-    logging.debug("Query: %s" % searchstr)
+    logging.debug("Query: {sstring}".format(sstring=searchstr))
     searchstr = '/scholar?q='+urllib2.quote(searchstr)
     url = GOOGLE_SCHOLAR_URL + searchstr
     header = HEADERS
@@ -196,11 +196,11 @@ if __name__ == "__main__":
     args = args[0]
     pdfmode = False
     if os.path.exists(args):
-        logging.debug("File exist, assuming you want me to lookup the pdf: %s." % args)
+        logging.debug("File exist, assuming you want me to lookup the pdf: {filename}.".format(filename=args))
         pdfmode = True
         biblist = pdflookup(args, all, outformat)
     else:
-        logging.debug("Assuming you want me to lookup the query: %s." % args)
+        logging.debug("Assuming you want me to lookup the query: {query}".format(query=args))
         biblist = query(args, outformat, options.all)
     if len(biblist) < 1:
         print "No results found, try again with a different query!"
