@@ -19,10 +19,12 @@
 # 02110-1301, USA.
 
 
-"""Library to query Google Scholar.
+"""
+Library to query Google Scholar.
 
-Call the method query with a string which contains the full search string.
-Query will return a list of bibtex items.
+Call the method query with a string which contains the full search
+string. Query will return a list of citations.
+
 """
 
 
