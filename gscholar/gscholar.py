@@ -26,7 +26,23 @@ Query will return a list of bibtex items.
 """
 
 
-import urllib2
+from __future__ import print_function
+
+
+try:
+    # python 2
+    from urllib2 import Request, urlopen, quote
+except ImportError:
+    # python 3
+    from urllib.request import Request, urlopen, quote
+
+try:
+    # python 2
+    from htmlentitydefs import name2codepoint
+except ImportError:
+    # python 3
+    from html.entities import name2codepoint
+
 import re
 import hashlib
 import random
@@ -35,12 +51,11 @@ import os
 import subprocess
 import optparse
 import logging
-from htmlentitydefs import name2codepoint
-
 
 
 # fake google id (looks like it is a 16 elements hex)
-google_id = hashlib.md5(str(random.random())).hexdigest()[:16]
+rand_str = str(random.random()).encode('utf8')
+google_id = hashlib.md5(rand_str).hexdigest()[:16]
 
 GOOGLE_SCHOLAR_URL = "http://scholar.google.com"
 # the cookie looks normally like:
@@ -59,12 +74,12 @@ FORMAT_WENXIANWANG = 5
 def query(searchstr, outformat, allresults=False):
     """Return a list of bibtex items."""
     logging.debug("Query: {sstring}".format(sstring=searchstr))
-    searchstr = '/scholar?q='+urllib2.quote(searchstr)
+    searchstr = '/scholar?q='+quote(searchstr)
     url = GOOGLE_SCHOLAR_URL + searchstr
     header = HEADERS
     header['Cookie'] = header['Cookie'] + ":CF=%d" % outformat
-    request = urllib2.Request(url, headers=header)
-    response = urllib2.urlopen(request)
+    request = Request(url, headers=header)
+    response = urlopen(request)
     html = response.read()
     html.decode('ascii', 'ignore')
     # grab the links
@@ -76,8 +91,8 @@ def query(searchstr, outformat, allresults=False):
         tmp = tmp[:1]
     for link in tmp:
         url = GOOGLE_SCHOLAR_URL+link
-        request = urllib2.Request(url, headers=header)
-        response = urllib2.urlopen(request)
+        request = Request(url, headers=header)
+        response = urlopen(request)
         bib = response.read()
         result.append(bib)
     return result
@@ -149,22 +164,22 @@ def rename_file(pdf, bibitem):
             l.append(i)
     filename = " - ".join(l) + ".pdf"
     newfile = pdf.replace(os.path.basename(pdf), filename)
-    print
-    print "Will rename:"
-    print
-    print "  %s" % pdf
-    print
-    print "to"
-    print
-    print "  %s" % newfile
-    print
-    print "Proceed? [y/N]"
+    print()
+    print("Will rename:")
+    print()
+    print("  %s" % pdf)
+    print()
+    print("to")
+    print()
+    print("  %s" % newfile)
+    print()
+    print("Proceed? [y/N]")
     answer = raw_input()
     if answer == 'y':
-        print "Renaming %s to %s" % (pdf, newfile)
+        print("Renaming %s to %s" % (pdf, newfile))
         os.rename(pdf, newfile)
     else:
-        print "Aborting."
+        print("Aborting.")
 
 
 if __name__ == "__main__":
@@ -203,18 +218,18 @@ if __name__ == "__main__":
         logging.debug("Assuming you want me to lookup the query: {query}".format(query=args))
         biblist = query(args, outformat, options.all)
     if len(biblist) < 1:
-        print "No results found, try again with a different query!"
+        print("No results found, try again with a different query!")
         sys.exit(1)
     if options.all == True:
         logging.debug("All results:")
         for i in biblist:
-            print i
+            print(i)
     else:
         logging.debug("First result:")
-        print biblist[0]
+        print(biblist[0])
     if options.rename == True:
         if not pdfmode:
-            print "You asked me to rename the pdf but didn't tell me which file to rename, aborting."
+            print("You asked me to rename the pdf but didn't tell me which file to rename, aborting.")
             sys.exit(1)
         else:
             rename_file(args, biblist[0])
