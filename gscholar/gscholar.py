@@ -96,7 +96,7 @@ def get_links(html, outformat):
     reflist = refre.findall(html)
     # escape html enteties
     reflist = [re.sub('&(%s);' % '|'.join(name2codepoint), lambda m:
-        unichr(name2codepoint[m.group(1)]), s) for s in reflist]
+                      unichr(name2codepoint[m.group(1)]), s) for s in reflist]
     return reflist
 
 
@@ -105,7 +105,8 @@ def convert_pdf_to_txt(pdf):
 
     This method requires pdftotext to be installed.
     """
-    stdout = subprocess.Popen(["pdftotext", "-q", pdf, "-"], stdout=subprocess.PIPE).communicate()[0]
+    stdout = subprocess.Popen(["pdftotext", "-q", pdf, "-"],
+                              stdout=subprocess.PIPE).communicate()[0]
     return stdout
 
 
@@ -170,13 +171,14 @@ if __name__ == "__main__":
     usage = 'Usage: %prog [options] {pdf | "search terms"}'
     parser = optparse.OptionParser(usage)
     parser.add_option("-a", "--all", action="store_true", dest="all",
-            default=False, help="show all bibtex results")
+                      default=False, help="show all bibtex results")
     parser.add_option("-d", "--debug", action="store_true", dest="debug",
-            default=False, help="show debugging output")
+                      default=False, help="show debugging output")
     parser.add_option("-r", "--rename", action="store_true", dest="rename",
-            default=False, help="rename file (asks before doing it)")
+                      default=False, help="rename file (asks before doing it)")
     parser.add_option("-f", "--outputformat", dest='output',
-            default="bibtex", help="Output format. Available formats are: bibtex, endnote, refman, wenxianwang [default: %default]")
+                      default="bibtex",
+                      help="Output format. Available formats are: bibtex, endnote, refman, wenxianwang [default: %default]")
     (options, args) = parser.parse_args()
     if options.debug == True:
         logging.basicConfig(level=logging.DEBUG)
