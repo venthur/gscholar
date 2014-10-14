@@ -4,6 +4,15 @@ Requirements
  * Python
  * pdftotext (command line tool)
 
+
+Note on Python2 and Python3
+===========================
+
+I try to make gscholar Python2 and Python3 compatible. Most steps are already
+done, but there is an unsolved error at the part where gscholar converts the
+htmlcodepoints to utf. Any help would be appreciated.
+
+
 Installing
 ==========
 
