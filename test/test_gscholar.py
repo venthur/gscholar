@@ -2,11 +2,18 @@
 # coding: utf8
 
 import unittest
+import time
+import random
 
 from gscholar import gscholar as gs
 
 
 class TestGScholar(unittest.TestCase):
+
+    def tearDown(self):
+        # wait 1-2 seconds between tests, so we don't hammer google's
+        # servers and get banned.
+        time.sleep(random.uniform(1, 2))
 
     def test_query(self):
         """Normal query with latin encoding should give non empty result."""
