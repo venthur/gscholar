@@ -101,7 +101,7 @@ def query(searchstr, outformat=FORMAT_BIBTEX, allresults=False):
     request = Request(url, headers=header)
     response = urlopen(request)
     html = response.read()
-    html.decode('ascii', 'ignore')
+    html = html.decode('utf8')
     # grab the links
     tmp = get_links(html, outformat)
 
@@ -114,6 +114,7 @@ def query(searchstr, outformat=FORMAT_BIBTEX, allresults=False):
         request = Request(url, headers=header)
         response = urlopen(request)
         bib = response.read()
+        bib = bib.decode('utf8')
         result.append(bib)
     return result
 
@@ -131,7 +132,7 @@ def get_links(html, outformat):
     reflist = refre.findall(html)
     # escape html entities
     reflist = [re.sub('&(%s);' % '|'.join(name2codepoint), lambda m:
-                      unichr(name2codepoint[m.group(1)]), s) for s in reflist]
+                      chr(name2codepoint[m.group(1)]), s) for s in reflist]
     return reflist
 
 
