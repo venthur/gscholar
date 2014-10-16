@@ -8,9 +8,8 @@ Requirements
 Note on Python2 and Python3
 ===========================
 
-I try to make gscholar Python2 and Python3 compatible. Most steps are already
-done, but there is an unsolved error at the part where gscholar converts the
-htmlcodepoints to utf. Any help would be appreciated.
+Gscholar is Python2 and Python3 compatible. No changes should be required to run
+on either Python version.
 
 
 Installing
