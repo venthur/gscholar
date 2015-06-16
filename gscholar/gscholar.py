@@ -180,7 +180,7 @@ def rename_file(pdf, bibitem):
         author = author.split(",")[0]
     title = _get_bib_element(bibitem, "title")
     l = [i for i in year, author, title if i]
-    filename = " - ".join(l) + ".pdf"
+    filename = "-".join(l) + ".pdf"
     newfile = pdf.replace(os.path.basename(pdf), filename)
     print()
     print("Will rename:")
