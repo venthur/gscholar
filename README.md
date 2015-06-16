@@ -1,3 +1,6 @@
+<a href="https://flattr.com/submit/auto?user_id=venthur&url=http%3A%2F%2Fgithub.com%2Fventhur%2Fgscholar" target="_blank"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0"></a>
+
+
 Requirements
 ============
 
