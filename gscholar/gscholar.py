@@ -216,7 +216,7 @@ if __name__ == "__main__":
                       default="bibtex",
                       help="Output format. Available formats are: bibtex, endnote, refman, wenxianwang [default: %default]")
     (options, args) = parser.parse_args()
-    if options.debug == True:
+    if options.debug is True:
         logging.basicConfig(level=logging.DEBUG)
     if options.output == 'bibtex':
         outformat = FORMAT_BIBTEX
@@ -241,17 +241,16 @@ if __name__ == "__main__":
     if len(biblist) < 1:
         print("No results found, try again with a different query!")
         sys.exit(1)
-    if options.all == True:
+    if options.all is True:
         logging.debug("All results:")
         for i in biblist:
             print(i)
     else:
         logging.debug("First result:")
         print(biblist[0])
-    if options.rename == True:
+    if options.rename is True:
         if not pdfmode:
             print("You asked me to rename the pdf but didn't tell me which file to rename, aborting.")
             sys.exit(1)
         else:
             rename_file(args, biblist[0])
-
