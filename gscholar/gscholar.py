@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # gscholar - Get bibtex entries from Goolge Scholar
-# Copyright (C) 2011-2014  Bastian Venthur <venthur at debian org>
+# Copyright (C) 2011-2015  Bastian Venthur <venthur at debian org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
