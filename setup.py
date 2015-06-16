@@ -3,9 +3,10 @@
 
 from distutils.core import setup
 
+import gscholar
 
 setup(name='gscholar',
-      version='1.0',
+      version=gscholar.__VERSION__,
       description='Python library to query Google Scholar.',
       author='Bastian Venthur',
       author_email='mail@venthur.de',
