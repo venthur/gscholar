@@ -27,10 +27,6 @@ string. Query will return a list of citations.
 
 """
 
-
-from __future__ import print_function
-
-
 try:
     # python 2
     from urllib2 import Request, urlopen, quote
