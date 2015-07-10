@@ -188,7 +188,7 @@ def rename_file(pdf, bibitem):
     print("  %s" % newfile)
     print()
     print("Proceed? [y/N]")
-    answer = raw_input()
+    answer = input()
     if answer == 'y':
         print("Renaming %s to %s" % (pdf, newfile))
         os.rename(pdf, newfile)
