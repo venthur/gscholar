@@ -132,19 +132,23 @@ def get_links(html, outformat):
     return reflist
 
 
-def convert_pdf_to_txt(pdf):
+def convert_pdf_to_txt(pdf, startpage=None):
     """Convert a pdf file to text and return the text.
 
     This method requires pdftotext to be installed.
     """
-    stdout = subprocess.Popen(["pdftotext", "-q", pdf, "-"],
+    if startpage is not None:
+        startpageargs = ['-f', str(startpage)]
+    else:
+        startpageargs = []
+    stdout = subprocess.Popen(["pdftotext", "-q"] + startpageargs + [pdf, "-"],
                               stdout=subprocess.PIPE).communicate()[0]
     return stdout
 
 
-def pdflookup(pdf, allresults, outformat):
+def pdflookup(pdf, allresults, outformat, startpage=None):
     """Look a pdf up on google scholar and return bibtex items."""
-    txt = convert_pdf_to_txt(pdf)
+    txt = convert_pdf_to_txt(pdf, startpage)
     # remove all non alphanumeric characters
     txt = re.sub("\W", " ", txt)
     words = txt.strip().split()[:20]
@@ -208,6 +212,8 @@ if __name__ == "__main__":
     parser.add_option("-f", "--outputformat", dest='output',
                       default="bibtex",
                       help="Output format. Available formats are: bibtex, endnote, refman, wenxianwang [default: %default]")
+    parser.add_option("-s", "--startpage", dest='startpage',
+                      help="Page number to start parsing PDF file at.")
     (options, args) = parser.parse_args()
     if options.debug is True:
         logging.basicConfig(level=logging.DEBUG)
@@ -227,7 +233,7 @@ if __name__ == "__main__":
     if os.path.exists(args):
         logging.debug("File exist, assuming you want me to lookup the pdf: {filename}.".format(filename=args))
         pdfmode = True
-        biblist = pdflookup(args, all, outformat)
+        biblist = pdflookup(args, all, outformat, options.startpage)
     else:
         logging.debug("Assuming you want me to lookup the query: {query}".format(query=args))
         biblist = query(args, outformat, options.all)
