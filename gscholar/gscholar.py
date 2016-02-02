@@ -27,19 +27,21 @@ string. Query will return a list of citations.
 
 """
 
-try:
-    # python 2
-    from urllib2 import Request, urlopen, quote
-except ImportError:
-    # python 3
-    from urllib.request import Request, urlopen, quote
+import urllib2
 
-try:
-    # python 2
-    from htmlentitydefs import name2codepoint
-except ImportError:
-    # python 3
-    from html.entities import name2codepoint
+"""try:"""
+"""# python 2"""
+from urllib2 import Request, urlopen, quote
+"""except ImportError:
+# python 3
+from urllib.request import Request, urlopen, quote"""
+
+"""try:
+# python 2"""
+from htmlentitydefs import name2codepoint
+"""except ImportError:
+# python 3
+from html.entities import name2codepoint"""
 
 import re
 import hashlib
@@ -55,18 +57,24 @@ import logging
 rand_str = str(random.random()).encode('utf8')
 google_id = hashlib.md5(rand_str).hexdigest()[:16]
 
-GOOGLE_SCHOLAR_URL = "http://scholar.google.com"
+GOOGLE_SCHOLAR_URL = "https://www.scholar.google.com"
 # the cookie looks normally like:
 #        'Cookie' : 'GSP=ID=%s:CF=4' % google_id }
 # where CF is the format (e.g. bibtex). since we don't know the format yet, we
 # have to append it later
-HEADERS = {'User-Agent': 'Mozilla/5.0',
+HEADERS = {'User-Agent': 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_3 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8J2 Safari/6533.18.5',
            'Cookie': 'GSP=ID=%s' % google_id}
 
 FORMAT_BIBTEX = 4
 FORMAT_ENDNOTE = 3
 FORMAT_REFMAN = 2
 FORMAT_WENXIANWANG = 5
+
+
+import ssl
+
+if hasattr(ssl, '_create_unverified_context'):
+    ssl._create_default_https_context = ssl._create_unverified_context
 
 
 def query(searchstr, outformat=FORMAT_BIBTEX, allresults=False):
@@ -89,11 +97,23 @@ def query(searchstr, outformat=FORMAT_BIBTEX, allresults=False):
         the list with citations
 
     """
+
+    """ proxy support goes here """
+    print "starting to set proxies"
+    proxy = "www-proxy.us.oracle.com:80/"
+    proxies = {"https":"https://%s" % proxy}
+    proxy_support = urllib2.ProxyHandler(proxies)
+    opener = urllib2.build_opener(proxy_support, urllib2.HTTPSHandler(debuglevel=1))
+    urllib2.install_opener(opener)
+    print "finish setting proxies"
+    
     logging.debug("Query: {sstring}".format(sstring=searchstr))
     searchstr = '/scholar?q='+quote(searchstr)
-    url = GOOGLE_SCHOLAR_URL + searchstr
+    url = GOOGLE_SCHOLAR_URL + searchstr + "&safe=active"
     header = HEADERS
     header['Cookie'] = header['Cookie'] + ":CF=%d" % outformat
+    print "url is " + url 
+    print "search string is " + searchstr
     request = Request(url, headers=header)
     response = urlopen(request)
     html = response.read()
