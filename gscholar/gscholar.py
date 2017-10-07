@@ -42,8 +42,6 @@ except ImportError:
     from html.entities import name2codepoint
 
 import re
-import hashlib
-import random
 import sys
 import os
 import subprocess
@@ -51,17 +49,8 @@ import optparse
 import logging
 
 
-# fake google id (looks like it is a 16 elements hex)
-rand_str = str(random.random()).encode('utf8')
-google_id = hashlib.md5(rand_str).hexdigest()[:16]
-
 GOOGLE_SCHOLAR_URL = "https://scholar.google.com"
-# the cookie looks normally like:
-#        'Cookie' : 'GSP=ID=%s:CF=4' % google_id }
-# where CF is the format (e.g. bibtex). since we don't know the format yet, we
-# have to append it later
-HEADERS = {'User-Agent': 'Mozilla/5.0',
-           'Cookie': 'GSP=ID=%s' % google_id}
+HEADERS = {'User-Agent': 'Mozilla/5.0'}
 
 FORMAT_BIBTEX = 4
 FORMAT_ENDNOTE = 3
@@ -93,7 +82,7 @@ def query(searchstr, outformat=FORMAT_BIBTEX, allresults=False):
     searchstr = '/scholar?q='+quote(searchstr)
     url = GOOGLE_SCHOLAR_URL + searchstr
     header = HEADERS
-    header['Cookie'] = header['Cookie'] + ":CF=%d" % outformat
+    header['Cookie'] = "GSP=CF=%d" % outformat
     request = Request(url, headers=header)
     response = urlopen(request)
     html = response.read()
