@@ -10,7 +10,7 @@ setup(name='gscholar',
       description='Python library to query Google Scholar.',
       long_description='This package provides a python package and CLI to query google scholar and get references in various formats (e.g. bibtex, endnote, etc.)',
       classifiers=[
-          'Development Status :: 5 :: Production/Stable',
+          'Development Status :: 5 - Production/Stable',
           'License :: OSI Approved :: MIT License',
           'Programming Language :: Python :: 2.7',
           'Programming Language :: Python :: 3.6',
