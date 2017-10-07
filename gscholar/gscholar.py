@@ -23,10 +23,8 @@ except ImportError:
     from html.entities import name2codepoint
 
 import re
-import sys
 import os
 import subprocess
-import optparse
 import logging
 
 
@@ -37,6 +35,9 @@ FORMAT_BIBTEX = 4
 FORMAT_ENDNOTE = 3
 FORMAT_REFMAN = 2
 FORMAT_WENXIANWANG = 5
+
+
+logger = logging.getLogger(__name__)
 
 
 def query(searchstr, outformat=FORMAT_BIBTEX, allresults=False):
@@ -59,7 +60,7 @@ def query(searchstr, outformat=FORMAT_BIBTEX, allresults=False):
         the list with citations
 
     """
-    logging.debug("Query: {sstring}".format(sstring=searchstr))
+    logger.debug("Query: {sstring}".format(sstring=searchstr))
     searchstr = '/scholar?q='+quote(searchstr)
     url = GOOGLE_SCHOLAR_URL + searchstr
     header = HEADERS
@@ -224,58 +225,3 @@ def rename_file(pdf, bibitem):
         os.rename(pdf, newfile)
     else:
         print("Aborting.")
-
-
-if __name__ == "__main__":
-    usage = 'Usage: %prog [options] {pdf | "search terms"}'
-    parser = optparse.OptionParser(usage)
-    parser.add_option("-a", "--all", action="store_true", dest="all",
-                      default=False, help="show all bibtex results")
-    parser.add_option("-d", "--debug", action="store_true", dest="debug",
-                      default=False, help="show debugging output")
-    parser.add_option("-r", "--rename", action="store_true", dest="rename",
-                      default=False, help="rename file (asks before doing it)")
-    parser.add_option("-f", "--outputformat", dest='output',
-                      default="bibtex",
-                      help="Output format. Available formats are: bibtex, endnote, refman, wenxianwang [default: %default]")
-    parser.add_option("-s", "--startpage", dest='startpage',
-                      help="Page number to start parsing PDF file at.")
-    (options, args) = parser.parse_args()
-    if options.debug is True:
-        logging.basicConfig(level=logging.DEBUG)
-    if options.output == 'bibtex':
-        outformat = FORMAT_BIBTEX
-    elif options.output == 'endnote':
-        outformat = FORMAT_ENDNOTE
-    elif options.output == 'refman':
-        outformat = FORMAT_REFMAN
-    elif options.output == 'wenxianwang':
-        outformat = FORMAT_WENXIANWANG
-    if len(args) != 1:
-        parser.error("No argument given, nothing to do.")
-        sys.exit(1)
-    args = args[0]
-    pdfmode = False
-    if os.path.exists(args):
-        logging.debug("File exist, assuming you want me to lookup the pdf: {filename}.".format(filename=args))
-        pdfmode = True
-        biblist = pdflookup(args, all, outformat, options.startpage)
-    else:
-        logging.debug("Assuming you want me to lookup the query: {query}".format(query=args))
-        biblist = query(args, outformat, options.all)
-    if len(biblist) < 1:
-        print("No results found, try again with a different query!")
-        sys.exit(1)
-    if options.all is True:
-        logging.debug("All results:")
-        for i in biblist:
-            print(i)
-    else:
-        logging.debug("First result:")
-        print(biblist[0])
-    if options.rename is True:
-        if not pdfmode:
-            print("You asked me to rename the pdf but didn't tell me which file to rename, aborting.")
-            sys.exit(1)
-        else:
-            rename_file(args, biblist[0])
