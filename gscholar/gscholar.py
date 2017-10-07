@@ -118,13 +118,13 @@ def query(searchstr, outformat=FORMAT_BIBTEX, allresults=False):
 def get_links(html, outformat):
     """Return a list of reference links from the html."""
     if outformat == FORMAT_BIBTEX:
-        refre = re.compile(r'<a href="(/scholar\.bib\?[^"]*)')
+        refre = re.compile(r'<a href="https://scholar.googleusercontent.com(/scholar\.bib\?[^"]*)')
     elif outformat == FORMAT_ENDNOTE:
-        refre = re.compile(r'<a href="(/scholar\.enw\?[^"]*)"')
+        refre = re.compile(r'<a href="https://scholar.googleusercontent.com(/scholar\.enw\?[^"]*)"')
     elif outformat == FORMAT_REFMAN:
-        refre = re.compile(r'<a href="(/scholar\.ris\?[^"]*)"')
+        refre = re.compile(r'<a href="https://scholar.googleusercontent.com(/scholar\.ris\?[^"]*)"')
     elif outformat == FORMAT_WENXIANWANG:
-        refre = re.compile(r'<a href="(/scholar\.ral\?[^"]*)"')
+        refre = re.compile(r'<a href="https://scholar.googleusercontent.com(/scholar\.ral\?[^"]*)"')
     reflist = refre.findall(html)
     # escape html entities
     reflist = [re.sub('&(%s);' % '|'.join(name2codepoint), lambda m:
