@@ -105,7 +105,20 @@ def query(searchstr, outformat=FORMAT_BIBTEX, allresults=False):
 
 
 def get_links(html, outformat):
-    """Return a list of reference links from the html."""
+    """Return a list of reference links from the html.
+
+    Parameters
+    ----------
+    html : str
+    outformat : int
+        the output format of the citations
+
+    Returns
+    -------
+    List[str]
+        the links to the references
+
+    """
     if outformat == FORMAT_BIBTEX:
         refre = re.compile(r'<a href="https://scholar.googleusercontent.com(/scholar\.bib\?[^"]*)')
     elif outformat == FORMAT_ENDNOTE:
@@ -125,6 +138,19 @@ def convert_pdf_to_txt(pdf, startpage=None):
     """Convert a pdf file to text and return the text.
 
     This method requires pdftotext to be installed.
+
+    Parameters
+    ----------
+    pdf : str
+        path to pdf file
+    startpage : int, optional
+        the first page we try to convert
+
+    Returns
+    -------
+    str
+        the converted text
+
     """
     if startpage is not None:
         startpageargs = ['-f', str(startpage)]
@@ -136,7 +162,25 @@ def convert_pdf_to_txt(pdf, startpage=None):
 
 
 def pdflookup(pdf, allresults, outformat, startpage=None):
-    """Look a pdf up on google scholar and return bibtex items."""
+    """Look a pdf up on google scholar and return bibtex items.
+
+    Paramters
+    ---------
+    pdf : str
+        path to the pdf file
+    allresults : bool
+        return all results or only the first (i.e. best one)
+    outformat : int
+        the output format of the citations
+    startpage : int
+        first page to start reading from
+
+    Returns
+    -------
+    List[str]
+        the list with citations
+
+    """
     txt = convert_pdf_to_txt(pdf, startpage)
     # remove all non alphanumeric characters
     txt = re.sub("\W", " ", txt)
@@ -147,7 +191,17 @@ def pdflookup(pdf, allresults, outformat, startpage=None):
 
 
 def _get_bib_element(bibitem, element):
-    """Return element from bibitem or None."""
+    """Return element from bibitem or None.
+
+    Paramteters
+    -----------
+    bibitem :
+    element :
+
+    Returns
+    -------
+
+    """
     lst = [i.strip() for i in bibitem.split("\n")]
     for i in lst:
         if i.startswith(element):
@@ -162,7 +216,9 @@ def _get_bib_element(bibitem, element):
 
 
 def rename_file(pdf, bibitem):
-    """Attempt to rename pdf according to bibitem."""
+    """Attempt to rename pdf according to bibitem.
+
+    """
     year = _get_bib_element(bibitem, "year")
     author = _get_bib_element(bibitem, "author")
     if author:
