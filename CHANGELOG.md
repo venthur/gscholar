@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.4.1] - 2017-10-07
+
+* Updated README
+* Updated github URL
+
 ## [1.4.0] - 2017-10-07
 
 * Moved CLI part into separate executable and install it via setup.py
