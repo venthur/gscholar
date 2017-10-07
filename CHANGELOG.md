@@ -3,6 +3,7 @@
 ## [unreleased]
 
 * Improved docstrings
+* Change license from GPL2 to MIT
 
 ## [1.3.1] - 2017-10-07
 

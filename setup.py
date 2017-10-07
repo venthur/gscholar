@@ -12,5 +12,5 @@ setup(name='gscholar',
       author_email='mail@venthur.de',
       url='http://github.com/venthur/gscholar',
       packages=['gscholar'],
-      license='GPL2',
+      license='MIT',
 )
