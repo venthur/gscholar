@@ -8,7 +8,11 @@ import os
 import gscholar as gs
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('gscholar')
+logging.basicConfig(
+    format='%(asctime)s %(levelname)s %(name)s %(message)s',
+    level=logging.WARNING
+)
 
 if __name__ == "__main__":
     usage = 'Usage: %prog [options] {pdf | "search terms"}'
@@ -26,7 +30,7 @@ if __name__ == "__main__":
                       help="Page number to start parsing PDF file at.")
     (options, args) = parser.parse_args()
     if options.debug is True:
-        logging.basicConfig(level=logging.DEBUG)
+        logger.setLevel(logging.DEBUG)
     if options.output == 'bibtex':
         outformat = gs.FORMAT_BIBTEX
     elif options.output == 'endnote':
