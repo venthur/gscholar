@@ -28,9 +28,15 @@ def main():
                       help="Output format. Available formats are: bibtex, endnote, refman, wenxianwang [default: %default]")
     parser.add_option("-s", "--startpage", dest='startpage',
                       help="Page number to start parsing PDF file at.")
+    parser.add_option('-V', '--version', action='store_true',
+                      help='Print version and quit.')
+
     (options, args) = parser.parse_args()
     if options.debug is True:
         logger.setLevel(logging.DEBUG)
+    if options.version:
+        print(gs.__VERSION__)
+        return
     if options.output == 'bibtex':
         outformat = gs.FORMAT_BIBTEX
     elif options.output == 'endnote':

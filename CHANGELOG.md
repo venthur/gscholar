@@ -4,6 +4,7 @@
 
 * Use `entry_points['console_scripts']` instead of plain `scripts` in setup.py
 * Moved script into `gscholar/__main__.py`
+* Added `-V/--version` parameter to CLI
 
 ## [1.4.1] - 2017-10-07
 
