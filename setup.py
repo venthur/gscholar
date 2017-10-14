@@ -20,6 +20,10 @@ setup(name='gscholar',
       author_email='mail@venthur.de',
       url='https://github.com/venthur/gscholar',
       packages=['gscholar'],
-      scripts=['bin/gscholar'],
+      entry_points={
+          'console_scripts': [
+              'gscholar = gscholar.__main__:main'
+          ]
+      },
       license='MIT',
 )

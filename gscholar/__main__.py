@@ -14,7 +14,7 @@ logging.basicConfig(
     level=logging.WARNING
 )
 
-if __name__ == "__main__":
+def main():
     usage = 'Usage: %prog [options] {pdf | "search terms"}'
     parser = optparse.OptionParser(usage)
     parser.add_option("-a", "--all", action="store_true", dest="all",
@@ -67,5 +67,8 @@ if __name__ == "__main__":
             sys.exit(1)
         else:
             gs.rename_file(args, biblist[0])
+
+
+main()
 
 # vim: set filetype=python
