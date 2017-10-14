@@ -31,6 +31,12 @@ gscholar provides a command line tool, to use it, just call `gscholar` like:
 $ gscholar "albert einstein"
 ```
 
+or
+
+```bash
+$ python3 -m gscholar "albert einstein"
+```
+
 ### Making a simple lookup:
 
 ```bash
