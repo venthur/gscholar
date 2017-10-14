@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.5.0] - 2017-11-14
+
+* Use `entry_points['console_scripts']` instead of plain `scripts` in setup.py
+* Moved script into `gscholar/__main__.py`
+
 ## [1.4.1] - 2017-10-07
 
 * Updated README
