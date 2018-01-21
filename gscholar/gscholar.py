@@ -140,6 +140,9 @@ def convert_pdf_to_txt(pdf, startpage=None):
         startpageargs = []
     stdout = subprocess.Popen(["pdftotext", "-q"] + startpageargs + [pdf, "-"],
                               stdout=subprocess.PIPE).communicate()[0]
+    # python2 and 3
+    if not isinstance(stdout, str):
+        stdout = stdout.decode()
     return stdout
 
 

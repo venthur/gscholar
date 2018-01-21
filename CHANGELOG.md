@@ -1,5 +1,9 @@
 # Changelog
 
+## [unreleased]
+
+* Fixed unicode error in Python3 during pdf renaming
+
 ## [1.5.1] - 2017-10-22
 
 * Fixed import problem with Python2
