@@ -1,8 +1,9 @@
 # Changelog
 
-## [unreleased]
+## [1.6.0] - 2018-01-21
 
 * Fixed unicode error in Python3 during pdf renaming
+* Don't ask before renaming pdf anymore
 
 ## [1.5.1] - 2017-10-22
 
