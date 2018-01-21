@@ -212,19 +212,5 @@ def rename_file(pdf, bibitem):
     l = [i for i in (year, author, title) if i]
     filename = "-".join(l) + ".pdf"
     newfile = pdf.replace(os.path.basename(pdf), filename)
-    print()
-    print("Will rename:")
-    print()
-    print("  %s" % pdf)
-    print()
-    print("to")
-    print()
-    print("  %s" % newfile)
-    print()
-    print("Proceed? [y/N]")
-    answer = input()
-    if answer == 'y':
-        print("Renaming %s to %s" % (pdf, newfile))
-        os.rename(pdf, newfile)
-    else:
-        print("Aborting.")
+    logger.info('Renaming {in_} to {out}'.format(in_=pdf, out=newfile))
+    os.rename(pdf, newfile)

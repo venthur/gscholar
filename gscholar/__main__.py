@@ -22,7 +22,7 @@ def main():
     parser.add_option("-d", "--debug", action="store_true", dest="debug",
                       default=False, help="show debugging output")
     parser.add_option("-r", "--rename", action="store_true", dest="rename",
-                      default=False, help="rename file (asks before doing it)")
+                      default=False, help="rename file")
     parser.add_option("-f", "--outputformat", dest='output',
                       default="bibtex",
                       help="Output format. Available formats are: bibtex, endnote, refman, wenxianwang [default: %default]")
