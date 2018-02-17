@@ -14,6 +14,7 @@ logging.basicConfig(
     level=logging.WARNING
 )
 
+
 def main():
     usage = 'Usage: %prog [options] {pdf | "search terms"}'
     parser = optparse.OptionParser(usage)
@@ -75,6 +76,7 @@ def main():
             gs.rename_file(args, biblist[0])
 
 
-main()
+if __name__ == '__main__':
+    main()
 
 # vim: set filetype=python
