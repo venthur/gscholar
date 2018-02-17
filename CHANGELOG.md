@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.6.1] - 2018-02-17
+
+* Include Changelog and LICENSE files in source distribution
+* Wrapped main script in proper main test
+
 ## [1.6.0] - 2018-01-21
 
 * Fixed unicode error in Python3 during pdf renaming
