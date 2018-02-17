@@ -1,0 +1,3 @@
+# include the LICENSE file
+include LICENSE
+include CHANGELOG.md
