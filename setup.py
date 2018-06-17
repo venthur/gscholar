@@ -19,6 +19,13 @@ setup(name='gscholar',
       author='Bastian Venthur',
       author_email='mail@venthur.de',
       url='https://github.com/venthur/gscholar',
+      extras_require={
+        'dev': [
+            'pytest',
+            'pytest-cov',
+            'flake8',
+        ]
+      },
       packages=['gscholar'],
       entry_points={
           'console_scripts': [
