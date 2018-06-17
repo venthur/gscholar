@@ -1,5 +1,10 @@
 # Changelog
 
+## [unreleased]
+
+* Added Makefile
+* Added continuous integration
+
 ## [1.6.1] - 2018-02-17
 
 * Include Changelog and LICENSE files in source distribution
