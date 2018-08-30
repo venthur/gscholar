@@ -59,7 +59,7 @@ assume you're a bot an ban you're IP temporarily)
 ### Querying using a pdf:
 
 ```bash
-$ gscolar /path/to/pdf
+$ gscholar /path/to/pdf
 ```
 
 Will read the pdf to generate a Google Scholar query. It uses this query to show
