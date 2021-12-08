@@ -8,20 +8,8 @@ string. Query will return a list of citations.
 
 """
 
-try:
-    # python 2
-    from urllib2 import Request, urlopen, quote
-except ImportError:
-    # python 3
-    from urllib.request import Request, urlopen, quote
-
-try:
-    # python 2
-    from htmlentitydefs import name2codepoint
-except ImportError:
-    # python 3
-    from html.entities import name2codepoint
-
+from urllib.request import Request, urlopen, quote
+from html.entities import name2codepoint
 import re
 import os
 import subprocess

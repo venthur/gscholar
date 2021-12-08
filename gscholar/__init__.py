@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
-from gscholar.gscholar import *
+from gscholar.gscholar import * # noqa
 
 __VERSION__ = '1.6.1'
