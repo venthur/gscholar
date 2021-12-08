@@ -1,3 +1,1 @@
-from gscholar.gscholar import * # noqa
-
-__VERSION__ = '1.6.1'
+from gscholar.version import __VERSION__ # noqa
