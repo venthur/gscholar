@@ -1,10 +1,11 @@
 # Changelog
 
-## [unreleased]
+## [2.0.0] - 2021-12-08
 
 * removed Python2 support
 * migrated to pytest
-* added github action tests
+* allow tests to fail that are effected by google's rate limiter
+* added github action for tests and dependency updates
 * fixed various linter errors
 
 ## [1.6.1] - 2018-02-17
