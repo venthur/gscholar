@@ -1,5 +1,11 @@
 # Changelog
 
+## [unreleased]
+
+* removed Python2 support
+* migrated to pytest
+* added github action tests
+
 ## [1.6.1] - 2018-02-17
 
 * Include Changelog and LICENSE files in source distribution
