@@ -5,6 +5,7 @@
 * removed Python2 support
 * migrated to pytest
 * added github action tests
+* fixed various linter errors
 
 ## [1.6.1] - 2018-02-17
 

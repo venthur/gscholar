@@ -89,14 +89,15 @@ def get_links(html, outformat):
         the links to the references
 
     """
+    base_url = 'https://scholar.googleusercontent.com'
     if outformat == FORMAT_BIBTEX:
-        refre = re.compile(r'<a href="https://scholar.googleusercontent.com(/scholar\.bib\?[^"]*)')
+        refre = re.compile(fr'<a href="{base_url}(/scholar\.bib\?[^"]*)')
     elif outformat == FORMAT_ENDNOTE:
-        refre = re.compile(r'<a href="https://scholar.googleusercontent.com(/scholar\.enw\?[^"]*)"')
+        refre = re.compile(fr'<a href="{base_url}(/scholar\.enw\?[^"]*)"')
     elif outformat == FORMAT_REFMAN:
-        refre = re.compile(r'<a href="https://scholar.googleusercontent.com(/scholar\.ris\?[^"]*)"')
+        refre = re.compile(fr'<a href="{base_url}(/scholar\.ris\?[^"]*)"')
     elif outformat == FORMAT_WENXIANWANG:
-        refre = re.compile(r'<a href="https://scholar.googleusercontent.com(/scholar\.ral\?[^"]*)"')
+        refre = re.compile(fr'<a href="{base_url}(/scholar\.ral\?[^"]*)"')
     reflist = refre.findall(html)
     # escape html entities
     reflist = [re.sub('&(%s);' % '|'.join(name2codepoint), lambda m:
@@ -156,7 +157,7 @@ def pdflookup(pdf, allresults, outformat, startpage=None):
     """
     txt = convert_pdf_to_txt(pdf, startpage)
     # remove all non alphanumeric characters
-    txt = re.sub("\W", " ", txt)
+    txt = re.sub(r"\W", " ", txt)
     words = txt.strip().split()[:20]
     gsquery = " ".join(words)
     bibtexlist = query(gsquery, outformat, allresults)
@@ -197,8 +198,8 @@ def rename_file(pdf, bibitem):
     if author:
         author = author.split(",")[0]
     title = _get_bib_element(bibitem, "title")
-    l = [i for i in (year, author, title) if i]
-    filename = "-".join(l) + ".pdf"
+    elem = [i for i in (year, author, title) if i]
+    filename = "-".join(elem) + ".pdf"
     newfile = pdf.replace(os.path.basename(pdf), filename)
     logger.info('Renaming {in_} to {out}'.format(in_=pdf, out=newfile))
     os.rename(pdf, newfile)
