@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import optparse
 import logging
 import sys
@@ -26,7 +24,9 @@ def main():
                       default=False, help="rename file")
     parser.add_option("-f", "--outputformat", dest='output',
                       default="bibtex",
-                      help="Output format. Available formats are: bibtex, endnote, refman, wenxianwang [default: %default]")
+                      help=("Output format. Available formats are: bibtex, "
+                            "endnote, refman, wenxianwang "
+                            "[default: %default]"))
     parser.add_option("-s", "--startpage", dest='startpage',
                       help="Page number to start parsing PDF file at.")
     parser.add_option('-V', '--version', action='store_true',
@@ -52,11 +52,12 @@ def main():
     args = args[0]
     pdfmode = False
     if os.path.exists(args):
-        logger.debug("File exist, assuming you want me to lookup the pdf: {filename}.".format(filename=args))
+        logger.debug(f"File exist, assuming you want me to lookup the pdf: "
+                     f"{args}.")
         pdfmode = True
         biblist = gs.pdflookup(args, all, outformat, options.startpage)
     else:
-        logger.debug("Assuming you want me to lookup the query: {query}".format(query=args))
+        logger.debug(f"Assuming you want me to lookup the query: {args}")
         biblist = gs.query(args, outformat, options.all)
     if len(biblist) < 1:
         print("No results found, try again with a different query!")
@@ -70,7 +71,8 @@ def main():
         print(biblist[0])
     if options.rename is True:
         if not pdfmode:
-            print("You asked me to rename the pdf but didn't tell me which file to rename, aborting.")
+            print("You asked me to rename the pdf but didn't tell me which "
+                  "file to rename, aborting.")
             sys.exit(1)
         else:
             gs.rename_file(args, biblist[0])
@@ -78,5 +80,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-# vim: set filetype=python
