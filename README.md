@@ -9,12 +9,6 @@ Query Google Scholar using Python.
  * pdftotext (command line tool)
 
 
-### Note on Python2 and Python3
-
-Gscholar is Python2 and Python3 compatible. No changes should be required to run
-on either Python version.
-
-
 ## Installing
 
 ```bash
