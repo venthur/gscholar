@@ -14,10 +14,17 @@ import re
 import os
 import subprocess
 import logging
+from time import sleep
 
 
 GOOGLE_SCHOLAR_URL = "https://scholar.google.com"
-HEADERS = {'User-Agent': 'Mozilla/5.0'}
+HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:12.0) Gecko/20100101 Firefox/12.0',
+    'Accept-Language': 'en-US',
+    # 'Accept-Encoding': 'gzip, deflate',
+    'Accept' : 'text/html',
+    'Referer' : 'https://scholar.google.com/'
+}
 
 FORMAT_BIBTEX = 4
 FORMAT_ENDNOTE = 3
@@ -28,7 +35,7 @@ FORMAT_WENXIANWANG = 5
 logger = logging.getLogger(__name__)
 
 
-def query(searchstr, outformat=FORMAT_BIBTEX, allresults=False):
+def query(searchstr, outformat=FORMAT_BIBTEX, delay=0.1, allresults=False, start_year='', end_year=''):
     """Query google scholar.
 
     This method queries google scholar and returns a list of citations.
@@ -41,6 +48,12 @@ def query(searchstr, outformat=FORMAT_BIBTEX, allresults=False):
         the output format of the citations. Default is bibtex.
     allresults : bool, optional
         return all results or only the first (i.e. best one)
+    delay: float, optional
+        delay for requesting, to not getting banned by google for to much requests in a short time
+    start_year: str, optional
+        4 number integer representing the start year of papers like 2020
+    end_year: str, optional
+        4 number integer representing the end year of papers like 2022
 
     Returns
     -------
@@ -49,12 +62,16 @@ def query(searchstr, outformat=FORMAT_BIBTEX, allresults=False):
 
     """
     logger.debug("Query: {sstring}".format(sstring=searchstr))
-    searchstr = '/scholar?q='+quote(searchstr)
+    # searchstr = '/scholar?q='+quote(searchstr)
+    searchstr = f'/scholar?q={quote(searchstr)}&as_ylo={quote(start_year)}&as_yhi={quote(end_year)}'
     url = GOOGLE_SCHOLAR_URL + searchstr
     header = HEADERS
     header['Cookie'] = "GSP=CF=%d" % outformat
     request = Request(url, headers=header)
     response = urlopen(request)
+    # add set_cookie in header in request header!
+    set_cookie = response.headers['Set-Cookie']
+    header['Cookie'] += set_cookie
     html = response.read()
     html = html.decode('utf8')
     # grab the links
@@ -65,6 +82,7 @@ def query(searchstr, outformat=FORMAT_BIBTEX, allresults=False):
     if not allresults:
         tmp = tmp[:1]
     for link in tmp:
+        sleep(delay)
         url = GOOGLE_SCHOLAR_URL+link
         request = Request(url, headers=header)
         response = urlopen(request)
