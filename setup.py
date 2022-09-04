@@ -25,6 +25,9 @@ setup(
             'https://github.com/venthur/gscholar/blob/master/CHANGELOG.md',
     },
     python_requires='>=3.6',
+    extras_require={
+        'shtab': ['completion'],
+    },
     packages=['gscholar'],
     entry_points={
         'console_scripts': [

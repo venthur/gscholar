@@ -5,6 +5,11 @@ import os
 
 import gscholar as gs
 
+try:
+    import shtab
+except ImportError:
+    from . import _shtab as shtab
+
 
 logger = logging.getLogger('gscholar')
 logging.basicConfig(
@@ -12,9 +17,26 @@ logging.basicConfig(
     level=logging.WARNING
 )
 
+# https://github.com/iterative/shtab/blob/master/examples/customcomplete.py#L11-L22
+PDF_FILE = {
+    "bash": "_shtab_greeter_compgen_pdf_files",
+    "zsh": "_files -g '*.pdf'",
+    "tcsh": "f:*.pdf"
+}
+PREAMBLE = {
+    "bash": """\
+# $1=COMP_WORDS[1]
+_shtab_greeter_compgen_pdf_files() {
+  compgen -d -- $1  # recurse into subdirs
+  compgen -f -X '!*?.pdf' -- $1
+}
+"""
+}
+
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser('gscholar')
+    shtab.add_argument_to(parser, preamble=PREAMBLE)
     parser.add_argument("-a", "--all", action="store_true", dest="all",
                         default=False, help="show all bibtex results")
     parser.add_argument("-d", "--debug", action="store_true", dest="debug",
@@ -32,7 +54,8 @@ def main():
                         version=gs.__VERSION__,
                         help='Print version and quit.')
     parser.add_argument('keyword', metavar='{pdf | "search terms"}',
-                        help='pdf | "search terms"')
+                        help='pdf | "search terms"'
+                        ).complete = PDF_FILE
 
     args = parser.parse_args()
     if args.debug is True:
