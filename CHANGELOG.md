@@ -1,6 +1,6 @@
 # Changelog
 
-## [unreleased]
+## [2.1.0] - 2022-10-04
 
 * dropped python 3.6 support
 * migrated from argparse to optparse
