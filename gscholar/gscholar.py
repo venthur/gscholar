@@ -55,6 +55,9 @@ def query(searchstr, outformat=FORMAT_BIBTEX, allresults=False):
     header['Cookie'] = "GSP=CF=%d" % outformat
     request = Request(url, headers=header)
     response = urlopen(request)
+    # add set_cookie in header in request header!
+    set_cookie = response.headers['Set-Cookie']
+    header['Cookie'] += set_cookie
     html = response.read()
     html = html.decode('utf8')
     # grab the links
