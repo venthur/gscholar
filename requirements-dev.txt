@@ -1,5 +1,5 @@
 twine==3.4.1
-wheel==0.36.2
+wheel==0.37.1
 pytest==6.2.4
 pytest-cov==4.0.0
 flake8==3.9.2
