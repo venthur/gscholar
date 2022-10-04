@@ -24,7 +24,7 @@ setup(
         'Changelog':
             'https://github.com/venthur/gscholar/blob/master/CHANGELOG.md',
     },
-    python_requires='>=3.6',
+    python_requires='>=3.7',
     packages=['gscholar'],
     entry_points={
         'console_scripts': [

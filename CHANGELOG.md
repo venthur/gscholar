@@ -1,5 +1,9 @@
 # Changelog
 
+## [unreleased]
+
+* dropped python 3.6 support
+
 ## [2.0.0] - 2021-12-08
 
 * removed Python2 support
