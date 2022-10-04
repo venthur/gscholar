@@ -3,6 +3,7 @@
 ## [unreleased]
 
 * dropped python 3.6 support
+* migrated from argparse to optparse
 * added set-cookie in response
 
 ## [2.0.0] - 2021-12-08
