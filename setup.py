@@ -26,6 +26,7 @@ setup(
     },
     python_requires='>=3.7',
     packages=['gscholar'],
+    extras_require={'completion': ['shtab']},
     entry_points={
         'console_scripts': [
             'gscholar = gscholar.__main__:main'
