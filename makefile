@@ -9,27 +9,36 @@ ifeq ($(OS), Windows_NT)
 endif
 
 
-all: lint test
+all: lint mypy test test-release
 
-$(VENV): requirements.txt requirements-dev.txt setup.py
+$(VENV): pyproject.toml
 	$(PY) -m venv $(VENV)
-	$(BIN)/pip install --upgrade -r requirements.txt
-	$(BIN)/pip install --upgrade -r requirements-dev.txt
-	$(BIN)/pip install -e .
+	$(BIN)/pip install -e .['dev']
 	touch $(VENV)
 
 .PHONY: test
 test: $(VENV)
 	$(BIN)/pytest
 
+.PHONY: mypy
+mypy: $(VENV)
+	$(BIN)/mypy
+
 .PHONY: lint
 lint: $(VENV)
-	$(BIN)/flake8
+	$(BIN)/ruff check .
+
+.PHONY: build
+build: $(VENV)
+	rm -rf dist
+	$(BIN)/python3 -m build
+
+.PHONY: test-release
+test-release: $(VENV) build
+	$(BIN)/twine check dist/*
 
 .PHONY: release
-release: $(VENV)
-	rm -rf dist
-	$(BIN)/python setup.py sdist bdist_wheel
+release: $(VENV) build
 	$(BIN)/twine upload dist/*
 
 .PHONY: clean

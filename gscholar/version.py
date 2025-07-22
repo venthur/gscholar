@@ -1,1 +1,3 @@
-__VERSION__ = '2.1.0'
+"""Provide gscholar's version."""
+
+__VERSION__ = "2.1.0"
