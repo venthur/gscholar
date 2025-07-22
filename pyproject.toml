@@ -1,0 +1,66 @@
+[build-system]
+requires = ["setuptools>=64.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gscholar"
+authors = [
+    { name="Bastian Venthur", email="mail@venthur.de" },
+]
+description = "CLI to query Google Scholar"
+keywords = ["google scholar", "cli"]
+readme = "README.md"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+dynamic = ["version"]
+
+[project.scripts]
+gscholar = "gscholar.__main__:main"
+
+[project.urls]
+'Source' = 'https://github.com/venthur/gscholar'
+'Changelog' = 'https://github.com/venthur/gscholar/blob/master/CHANGELOG.md'
+[project.optional-dependencies]
+dev = [
+    "build",
+    "mypy",
+    "pytest",
+    "pytest-cov",
+    "ruff",
+    "twine",
+    "wheel",
+]
+
+[tool.setuptools.dynamic]
+version = {attr = "gscholar.__VERSION__" }
+
+[tool.setuptools]
+packages = [
+    "gscholar",
+]
+
+[tool.pytest.ini_options]
+addopts = """
+    --cov=gscholar
+    --cov=tests
+    --cov-report=html
+    --cov-report=term-missing:skip-covered
+"""
+
+[tool.ruff]
+line-length = 79
+
+[tool.ruff.lint]
+select = [
+    "F",        # pyflakes
+    "E", "W",   # pycodestyle
+    "C90",      # mccabe
+    "I",        # isort
+    "D",        # pydocstyle
+    "UP"        # pyupgrade
+]
+pydocstyle.convention = "numpy"
+
+[tool.mypy]
+files = "gscholar,tests"
+strict = true

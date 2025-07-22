@@ -1,10 +1,11 @@
+"""gscholar's CLI module."""
+
 import argparse
 import logging
-import sys
 import os
+import sys
 
 import gscholar as gs
-
 
 logger = logging.getLogger('gscholar')
 logging.basicConfig(
@@ -13,7 +14,8 @@ logging.basicConfig(
 )
 
 
-def main():
+def main() -> None:
+    """CLI entry point."""
     usage = 'Usage: %prog [options] {pdf | "search terms"}'
     parser = argparse.ArgumentParser(usage)
     parser.add_argument(
@@ -45,20 +47,22 @@ def main():
     args = parser.parse_args()
     if args.debug is True:
         logger.setLevel(logging.DEBUG)
-    if args.output == 'bibtex':
-        outformat = gs.FORMAT_BIBTEX
-    elif args.output == 'endnote':
-        outformat = gs.FORMAT_ENDNOTE
-    elif args.output == 'refman':
-        outformat = gs.FORMAT_REFMAN
-    elif args.output == 'wenxianwang':
-        outformat = gs.FORMAT_WENXIANWANG
+
+    outformat = {
+        'bibtex': gs.FORMAT_BIBTEX,
+        'endnote': gs.FORMAT_ENDNOTE,
+        'refman': gs.FORMAT_REFMAN,
+        'wenxianwang': gs.FORMAT_WENXIANWANG,
+    }[args.output]
+
     pdfmode = False
     if os.path.exists(args.keyword):
         logger.debug(f"File exist, assuming you want me to lookup the pdf: "
                      f"{args}.")
         pdfmode = True
-        biblist = gs.pdflookup(args.keyword, all, outformat, args.startpage)
+        biblist = gs.pdflookup(
+            args.keyword, args.all, outformat, args.startpage
+        )
     else:
         logger.debug(f"Assuming you want me to lookup the query: {args}")
         biblist = gs.query(args.keyword, outformat, args.all)

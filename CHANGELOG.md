@@ -1,5 +1,14 @@
 # Changelog
 
+## unreleased
+
+* migrated to pyproject.toml
+* removed pinned dependencies in requirements.txt and requirements-dev.txt
+* bumped minimum python version to 3.10
+* added mypy testing
+* replaced flake8 with ruff
+
+
 ## [2.1.0] - 2022-10-04
 
 * dropped python 3.6 support
