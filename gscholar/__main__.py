@@ -7,10 +7,10 @@ import sys
 
 import gscholar as gs
 
-logger = logging.getLogger('gscholar')
+logger = logging.getLogger("gscholar")
 logging.basicConfig(
-    format='%(asctime)s %(levelname)s %(name)s %(message)s',
-    level=logging.WARNING
+    format="%(asctime)s %(levelname)s %(name)s %(message)s",
+    level=logging.WARNING,
 )
 
 
@@ -19,46 +19,49 @@ def main() -> None:
     usage = 'Usage: %prog [options] {pdf | "search terms"}'
     parser = argparse.ArgumentParser(usage)
     parser.add_argument(
-        "-a", "--all", action="store_true",
-        help="show all bibtex results"
+        "-a", "--all", action="store_true", help="show all bibtex results"
     )
     parser.add_argument(
-        "-d", "--debug", action="store_true",
-        help="show debugging output"
+        "-d", "--debug", action="store_true", help="show debugging output"
     )
     parser.add_argument(
-        "-r", "--rename", action="store_true",
-        help="rename file"
+        "-r", "--rename", action="store_true", help="rename file"
     )
     parser.add_argument(
-        "-f", "--outputformat", dest='output', default="bibtex",
+        "-f",
+        "--outputformat",
+        dest="output",
+        default="bibtex",
         help=(
             "Output format. Available formats are: bibtex, endnote, refman,"
-            "wenxianwang [default: %(default)s]"))
-    parser.add_argument(
-        "-s", "--startpage",
-        help="Page number to start parsing PDF file at."
+            "wenxianwang [default: %(default)s]"
+        ),
     )
     parser.add_argument(
-        '--version', action='version', version=gs.__VERSION__)
+        "-s", "--startpage", help="Page number to start parsing PDF file at."
+    )
+    parser.add_argument("--version", action="version", version=gs.__VERSION__)
     parser.add_argument(
-        'keyword', metavar='{pdf | "search terms"}',
-        help='pdf | "search terms"')
+        "keyword",
+        metavar='{pdf | "search terms"}',
+        help='pdf | "search terms"',
+    )
     args = parser.parse_args()
     if args.debug is True:
         logger.setLevel(logging.DEBUG)
 
     outformat = {
-        'bibtex': gs.FORMAT_BIBTEX,
-        'endnote': gs.FORMAT_ENDNOTE,
-        'refman': gs.FORMAT_REFMAN,
-        'wenxianwang': gs.FORMAT_WENXIANWANG,
+        "bibtex": gs.FORMAT_BIBTEX,
+        "endnote": gs.FORMAT_ENDNOTE,
+        "refman": gs.FORMAT_REFMAN,
+        "wenxianwang": gs.FORMAT_WENXIANWANG,
     }[args.output]
 
     pdfmode = False
     if os.path.exists(args.keyword):
-        logger.debug(f"File exist, assuming you want me to lookup the pdf: "
-                     f"{args}.")
+        logger.debug(
+            f"File exist, assuming you want me to lookup the pdf: {args}."
+        )
         pdfmode = True
         biblist = gs.pdflookup(
             args.keyword, args.all, outformat, args.startpage
@@ -78,12 +81,14 @@ def main() -> None:
         print(biblist[0])
     if args.rename is True:
         if not pdfmode:
-            print("You asked me to rename the pdf but didn't tell me which "
-                  "file to rename, aborting.")
+            print(
+                "You asked me to rename the pdf but didn't tell me which "
+                "file to rename, aborting."
+            )
             sys.exit(1)
         else:
             gs.rename_file(args.keyword, biblist[0])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

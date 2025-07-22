@@ -17,7 +17,7 @@ from urllib.parse import quote
 from urllib.request import Request, urlopen
 
 GOOGLE_SCHOLAR_URL = "https://scholar.google.com"
-HEADERS = {'User-Agent': 'Mozilla/5.0'}
+HEADERS = {"User-Agent": "Mozilla/5.0"}
 
 FORMAT_BIBTEX = 4
 FORMAT_ENDNOTE = 3
@@ -29,9 +29,7 @@ logger = logging.getLogger(__name__)
 
 
 def query(
-    searchstr: str,
-    outformat: int = FORMAT_BIBTEX,
-    allresults: bool = False
+    searchstr: str, outformat: int = FORMAT_BIBTEX, allresults: bool = False
 ) -> list[str]:
     """Query google scholar.
 
@@ -53,17 +51,17 @@ def query(
 
     """
     logger.debug(f"Query: {searchstr}")
-    searchstr = '/scholar?q='+quote(searchstr)
+    searchstr = "/scholar?q=" + quote(searchstr)
     url = GOOGLE_SCHOLAR_URL + searchstr
     header = HEADERS
-    header['Cookie'] = f"GSP=CF={outformat}"
+    header["Cookie"] = f"GSP=CF={outformat}"
     request = Request(url, headers=header)
     response = urlopen(request)
     # add set_cookie in header in request header!
-    set_cookie = response.headers['Set-Cookie']
-    header['Cookie'] += set_cookie
+    set_cookie = response.headers["Set-Cookie"]
+    header["Cookie"] += set_cookie
     html = response.read()
-    html = html.decode('utf8')
+    html = html.decode("utf8")
     # grab the links
     tmp = get_links(html, outformat)
 
@@ -72,11 +70,11 @@ def query(
     if not allresults:
         tmp = tmp[:1]
     for link in tmp:
-        url = GOOGLE_SCHOLAR_URL+link
+        url = GOOGLE_SCHOLAR_URL + link
         request = Request(url, headers=header)
         response = urlopen(request)
         bib = response.read()
-        bib = bib.decode('utf8')
+        bib = bib.decode("utf8")
         result.append(bib)
     return result
 
@@ -96,24 +94,25 @@ def get_links(html: str, outformat: int) -> list[str]:
         the links to the references
 
     """
-    base_url = 'https://scholar.googleusercontent.com'
+    base_url = "https://scholar.googleusercontent.com"
     if outformat == FORMAT_BIBTEX:
-        refre = re.compile(fr'<a href="{base_url}(/scholar\.bib\?[^"]*)')
+        refre = re.compile(rf'<a href="{base_url}(/scholar\.bib\?[^"]*)')
     elif outformat == FORMAT_ENDNOTE:
-        refre = re.compile(fr'<a href="{base_url}(/scholar\.enw\?[^"]*)"')
+        refre = re.compile(rf'<a href="{base_url}(/scholar\.enw\?[^"]*)"')
     elif outformat == FORMAT_REFMAN:
-        refre = re.compile(fr'<a href="{base_url}(/scholar\.ris\?[^"]*)"')
+        refre = re.compile(rf'<a href="{base_url}(/scholar\.ris\?[^"]*)"')
     elif outformat == FORMAT_WENXIANWANG:
-        refre = re.compile(fr'<a href="{base_url}(/scholar\.ral\?[^"]*)"')
+        refre = re.compile(rf'<a href="{base_url}(/scholar\.ral\?[^"]*)"')
     reflist = refre.findall(html)
     # escape html entities
     reflist = [
         re.sub(
-            '&({});'.format('|'.join(name2codepoint)),
+            "&({});".format("|".join(name2codepoint)),
             lambda m: chr(name2codepoint[m.group(1)]),  # type: ignore[index]
-            s
+            s,
         )
-        for s in reflist]
+        for s in reflist
+    ]
     return reflist
 
 
@@ -136,20 +135,19 @@ def convert_pdf_to_txt(pdf: str, startpage: int | None = None) -> str:
 
     """
     if startpage is not None:
-        startpageargs = ['-f', str(startpage)]
+        startpageargs = ["-f", str(startpage)]
     else:
         startpageargs = []
-    stdout = subprocess.Popen(["pdftotext", "-q"] + startpageargs + [pdf, "-"],
-                              stdout=subprocess.PIPE).communicate()[0]
+    stdout = subprocess.Popen(
+        ["pdftotext", "-q"] + startpageargs + [pdf, "-"],
+        stdout=subprocess.PIPE,
+    ).communicate()[0]
 
     return stdout.decode()
 
 
 def pdflookup(
-        pdf: str,
-        allresults: bool,
-        outformat: int,
-        startpage: int | None = None
+    pdf: str, allresults: bool, outformat: int, startpage: int | None = None
 ) -> list[str]:
     """Look a pdf up on google scholar and return bibtex items.
 
@@ -197,9 +195,9 @@ def _get_bib_element(bibitem: str, element: str) -> str | None:
         if i.startswith(element):
             value = i.split("=", 1)[-1]
             value = value.strip()
-            while value.endswith(','):
+            while value.endswith(","):
                 value = value[:-1]
-            while value.startswith('{') or value.startswith('"'):
+            while value.startswith("{") or value.startswith('"'):
                 value = value[1:-1]
             return value
     return None
@@ -215,5 +213,5 @@ def rename_file(pdf: str, bibitem: str) -> None:
     elem = [i for i in (year, author, title) if i]
     filename = "-".join(elem) + ".pdf"
     newfile = pdf.replace(os.path.basename(pdf), filename)
-    logger.info(f'Renaming {pdf} to {newfile}')
+    logger.info(f"Renaming {pdf} to {newfile}")
     os.rename(pdf, newfile)
