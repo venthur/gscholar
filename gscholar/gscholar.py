@@ -17,8 +17,12 @@ from urllib.parse import quote
 from urllib.request import Request, urlopen
 
 GOOGLE_SCHOLAR_URL = "https://scholar.google.com"
-HEADERS = {"User-Agent": "Mozilla/5.0"}
-
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0",
+    "Accept-Language": "en-us",
+    "Accept": "text/html",
+    'Referer': 'https://scholar.google.com/',
+}
 FORMAT_BIBTEX = 4
 FORMAT_ENDNOTE = 3
 FORMAT_REFMAN = 2

@@ -7,7 +7,7 @@
 * bumped minimum python version to 3.10
 * added mypy testing
 * replaced flake8 with ruff
-
+* update user agent
 
 ## [2.1.0] - 2022-10-04
 
