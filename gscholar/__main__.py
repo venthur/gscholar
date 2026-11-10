@@ -32,6 +32,7 @@ def main() -> None:
         "--outputformat",
         dest="output",
         default="bibtex",
+        choices=("bibtex", "endnote", "refman", "wenxianwang"),
         help=(
             "Output format. Available formats are: bibtex, endnote, refman,"
             "wenxianwang [default: %(default)s]"
